@@ -30,4 +30,8 @@ public class Main {
 // MAURICIO COMMIT
 // SAM COMMIT
 // BLAKE COMMIT
+<<<<<<< HEAD
 // WILLIAM COMMIT
+=======
+// MERDAN COMMIT
+>>>>>>> refs/remotes/origin/master
