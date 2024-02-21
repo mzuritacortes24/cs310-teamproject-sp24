@@ -22,11 +22,10 @@ public class Main {
         // output should be "Test Badge: #C4F37EFF (Welch, Travis C)"
         
         System.err.println("Test Badge: " + b.toString());
-        
-        //Sam Burrow test commit
 
     }
 
 }
 // DENVER COMMIT
 // MAURICIO COMMIT
+// SAM COMMIT
