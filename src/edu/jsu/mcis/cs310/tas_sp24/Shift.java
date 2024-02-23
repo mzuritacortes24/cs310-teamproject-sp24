@@ -12,6 +12,7 @@ public class Shift {
     private String description;
     private int id, roundInterval, gracePeriod, dockPenalty, lunchThreshold;
     private LocalTime shiftStart, shiftStop, lunchStart, lunchStop;
+    private int lunchDuration, shiftDuration;
     
     // constructor that accepts a Map as argument
     public Shift(Map<String, String> shiftInfo){
@@ -25,7 +26,9 @@ public class Shift {
         roundInterval = Integer.parseInt(shiftInfo.get("roundinterval"));
         gracePeriod = Integer.parseInt(shiftInfo.get("graceperiod"));
         dockPenalty = Integer.parseInt(shiftInfo.get("dockpenalty"));
-        lunchThreshold = Integer.parseInt(shiftInfo.get("lunchthreshold"));  
+        lunchThreshold = Integer.parseInt(shiftInfo.get("lunchthreshold"));
+        lunchDuration = Integer.parseInt(shiftInfo.get("lunchduration"));
+        shiftDuration = Integer.parseInt(shiftInfo.get("shiftduration"));
     }
 
     
@@ -70,4 +73,20 @@ public class Shift {
     public LocalTime getLunchStop() {
         return lunchStop;
     }
+
+    public int getLunchDuration() {
+        return lunchDuration;
+    }
+
+    public int getShiftDuration() {
+        return shiftDuration;
+    }
+
+    // override toString() method
+    @Override
+    public String toString() {
+        return String.format("%s: %s - %s (%d minutes); Lunch: %s - %s (%d minutes)",
+                description, shiftStart, shiftStop, shiftDuration, lunchStart, lunchStop, lunchDuration);
+    }
+    
 }
