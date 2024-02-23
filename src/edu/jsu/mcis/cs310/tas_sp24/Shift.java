@@ -27,4 +27,47 @@ public class Shift {
         dockPenalty = Integer.parseInt(shiftInfo.get("dockpenalty"));
         lunchThreshold = Integer.parseInt(shiftInfo.get("lunchthreshold"));  
     }
+
+    
+    // getter methods for all instance fields
+    
+    public int getId() {
+        return id;
+    }
+    
+    public String getDescription() {
+        return description;
+    }
+
+    public int getRoundInterval() {
+        return roundInterval;
+    }
+
+    public int getGracePeriod() {
+        return gracePeriod;
+    }
+
+    public int getDockPenalty() {
+        return dockPenalty;
+    }
+
+    public int getLunchThreshold() {
+        return lunchThreshold;
+    }
+
+    public LocalTime getShiftStart() {
+        return shiftStart;
+    }
+
+    public LocalTime getShiftStop() {
+        return shiftStop;
+    }
+
+    public LocalTime getLunchStart() {
+        return lunchStart;
+    }
+
+    public LocalTime getLunchStop() {
+        return lunchStop;
+    }
 }
