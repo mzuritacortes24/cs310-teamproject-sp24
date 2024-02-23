@@ -16,19 +16,19 @@ public class Shift {
     
     // constructor that accepts a Map as argument
     public Shift(Map<String, String> shiftInfo){
-        description = shiftInfo.get("description");
+        description = shiftInfo.get("Description");
         
-        shiftStart = LocalTime.parse(shiftInfo.get("shiftstart"));
-        shiftStop = LocalTime.parse(shiftInfo.get("shiftstop"));
-        lunchStart = LocalTime.parse(shiftInfo.get("luinchstart"));
-        lunchStop = LocalTime.parse(shiftInfo.get("lunchstop"));
+        shiftStart = LocalTime.parse(shiftInfo.get("Shift Start"));
+        shiftStop = LocalTime.parse(shiftInfo.get("Shift Stop"));
+        lunchStart = LocalTime.parse(shiftInfo.get("Lunch Start"));
+        lunchStop = LocalTime.parse(shiftInfo.get("Lunch Stop"));
         
-        roundInterval = Integer.parseInt(shiftInfo.get("roundinterval"));
-        gracePeriod = Integer.parseInt(shiftInfo.get("graceperiod"));
-        dockPenalty = Integer.parseInt(shiftInfo.get("dockpenalty"));
-        lunchThreshold = Integer.parseInt(shiftInfo.get("lunchthreshold"));
-        lunchDuration = Integer.parseInt(shiftInfo.get("lunchduration"));
-        shiftDuration = Integer.parseInt(shiftInfo.get("shiftduration"));
+        roundInterval = Integer.parseInt(shiftInfo.get("Round Interval"));
+        gracePeriod = Integer.parseInt(shiftInfo.get("Grace Period"));
+        dockPenalty = Integer.parseInt(shiftInfo.get("Dock Penalty"));
+        lunchThreshold = Integer.parseInt(shiftInfo.get("Lunch Threshold"));
+        lunchDuration = Integer.parseInt(shiftInfo.get("Lunch Duration"));
+        shiftDuration = Integer.parseInt(shiftInfo.get("Shift Duration"));
     }
 
     
