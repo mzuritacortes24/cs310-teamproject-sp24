@@ -14,6 +14,7 @@ public class Main {
 
         DAOFactory daoFactory = new DAOFactory("tas.jdbc");
         BadgeDAO badgeDAO = daoFactory.getBadgeDAO();
+        ShiftDAO shiftDAO = daoFactory.getShiftDAO();
         
         // find badge
 
@@ -23,6 +24,24 @@ public class Main {
         
         System.err.println("Test Badge: " + b.toString());
 
+        
+        // find shift
+        
+        // test finding shift by ID
+        Shift shiftById = shiftDAO.find(1);
+        if (shiftById != null) {
+            System.out.println("Shift found by ID:" + shiftById);
+        } else {
+            System.out.println("Shift not foudn by ID");
+        }
+        
+        // test finding shift by badge
+        Shift shiftByBadge = shiftDAO.find(b);
+        if (shiftByBadge != null) {
+            System.out.println("Shift found by badge:" + shiftByBadge);
+        } else {
+            System.out.println("Shift not found by badge");
+        }
     }
 
 }
