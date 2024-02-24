@@ -13,7 +13,16 @@ public class Employee {
     private Shift shift;
     private EmployeeType employeeType;
 
-    public Employee() {
+    public Employee(int id, String firstname, String middlename, String lastname, LocalDateTime active, Badge badge, Department department, Shift shift, EmployeeType employeeType ) {
+        this.id = id;
+        this.firstname = firstname;
+        this.middlename = middlename;
+        this.lastname = lastname;
+        this.active = active;
+        this.badge = badge;
+        this.department = department;
+        this.shift = shift;
+        this.employeeType = employeeType;
         
     } 
     public int getId() {
@@ -53,19 +62,21 @@ public class Employee {
     }
     @Override
     public String toString() {
-    
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        String activeFormatted = active.format(formatter);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
+        // Build the name string conditionally based on the presence of a middle name
+        String name = String.format("%s, %s", this.lastname, this.firstname);
+        if (this.middlename != null && !this.middlename.isEmpty()) {
+            // Append the first character of the middle name without a period
+            name += " " + this.middlename.charAt(0);
+        }
 
-        String fullName = firstname + (middlename != null && !middlename.isEmpty() ? " " + middlename + " " : " ") + lastname;
-
-        return "Employee{" +
-                "id=" + id +
-                ", name='" + fullName + '\'' +
-                ", badge=" + badge.getId() + // Assuming the Badge class has a getId() method.
-                ", type=" + employeeType +
-                ", department=" + department.getDescription() + // Assuming the Department class has a getDescription() method.
-                ", active=" + activeFormatted +
-                '}';
+        // Format the rest of the string as per the requirements
+        return String.format("ID #%d: %s (#%s), Type: %s, Department: %s, Active: %s",
+            this.id,
+            name,
+            this.badge.getId(),
+            this.employeeType.toString(),
+            this.department.getDescription(),
+            this.active.format(formatter));
     }
 }
