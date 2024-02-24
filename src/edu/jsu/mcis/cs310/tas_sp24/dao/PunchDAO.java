@@ -46,16 +46,7 @@ public class PunchDAO {
                         Badge badge = badgeDAO.find(rs.getString("badgeid"));
                         java.sql.Timestamp timestamp = rs.getTimestamp("timestamp");
                         LocalDateTime originaltimestamp = timestamp.toLocalDateTime();
-                        EventType punchType = null;
-                        
-                        switch(rs.getInt("eventtypeid")){
-                            case 0 -> punchType = EventType.valueOf("CLOCK_OUT");
-                            
-                            case 1 -> punchType = EventType.valueOf("CLOCK_IN");
-                                
-                            case 2 -> punchType = EventType.valueOf("TIME_OUT");
-                                
-                        }
+                        EventType punchType = EventType.values()[rs.getInt("eventtypeid")];
                         
                         punch = new Punch(terminalid, badge, originaltimestamp, punchType);
 
