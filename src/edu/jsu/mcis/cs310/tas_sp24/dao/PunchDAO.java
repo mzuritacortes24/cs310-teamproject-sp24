@@ -10,45 +10,51 @@ import java.time.LocalDateTime;
 
 public class PunchDAO {
     
-    private static final String QUERY_FIND = "SELECT * FROM event WHERE id = ?";
+    private static final String QUERY_FIND = "SELECT * FROM event WHERE id = ?";/* prepare statment for selection */
     
-    private final DAOFactory daoFactory;
+    private final DAOFactory daoFactory;                                        /* instantiate DAOFactory object */
     
     PunchDAO(DAOFactory daoFactory) {
 
-        this.daoFactory = daoFactory;
+        this.daoFactory = daoFactory;                                           /* set daoFactory equal to overall daoFactory */
 
     }
     
     public Punch find(int id){
-        Punch punch = null;
+        
+        Punch punch = null;                                                     /* initialize Punch object */
 
-        PreparedStatement ps = null;
-        ResultSet rs = null;
+        PreparedStatement ps = null;                                            /* initialize PreparedStatement */
+        ResultSet rs = null;                                                    /* initialize ResultSet */
         
         try {
-            Connection conn = daoFactory.getConnection();
+            
+            Connection conn = daoFactory.getConnection();                       /* connect to database */
             
             if(conn.isValid(0)) {
                 
-                ps = conn.prepareStatement(QUERY_FIND);
-                ps.setInt(1, id);
+                ps = conn.prepareStatement(QUERY_FIND);                   /* set ps equal to statement string */
+                ps.setInt(1, id);                                          /* pass arguments into ps */
             
-                boolean hasresults = ps.execute();
+                boolean hasresults = ps.execute();                              /* execute statement and return true/false */
                 
                 if (hasresults) {
                     
-                    rs = ps.getResultSet();
+                    rs = ps.getResultSet();                                     /* set rs equal to ps ResultSet */
                     
                     while (rs.next()) {
-                        BadgeDAO badgeDAO = daoFactory.getBadgeDAO();
-                        int terminalid = rs.getInt("terminalid");
-                        Badge badge = badgeDAO.find(rs.getString("badgeid"));
-                        java.sql.Timestamp timestamp = rs.getTimestamp("timestamp");
-                        LocalDateTime originaltimestamp = timestamp.toLocalDateTime();
-                        EventType punchType = EventType.values()[rs.getInt("eventtypeid")];
                         
-                        punch = new Punch(terminalid, badge, originaltimestamp, punchType);
+                        int terminalid = rs.getInt("terminalid");                           /* populate value for Punch constructor */
+                        
+                        BadgeDAO badgeDAO = daoFactory.getBadgeDAO();                             /* " */
+                        Badge badge = badgeDAO.find(rs.getString("badgeid"));            /* " */
+                        
+                        java.sql.Timestamp timestamp = rs.getTimestamp("timestamp");        /* " */
+                        LocalDateTime originaltimestamp = timestamp.toLocalDateTime();            /* " */
+                        
+                        EventType punchType = EventType.values()[rs.getInt("eventtypeid")]; /* " */
+                        
+                        punch = new Punch(terminalid, badge, originaltimestamp, punchType);       /* call Punch object constructor and pass in arguments from database*/
 
                     }
                     
@@ -63,18 +69,31 @@ public class PunchDAO {
         } finally {
 
             if (rs != null) {
+                
                 try {
+                    
                     rs.close();
+                    
                 } catch (SQLException e) {
+                    
                     throw new DAOException(e.getMessage());
+                    
                 }
+                
             }
+            
             if (ps != null) {
+                
                 try {
+                    
                     ps.close();
+                    
                 } catch (SQLException e) {
+                    
                     throw new DAOException(e.getMessage());
+                    
                 }
+                
             }
 
         }
