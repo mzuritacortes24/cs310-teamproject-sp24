@@ -3,6 +3,7 @@ package edu.jsu.mcis.cs310.tas_sp24.dao;
 import edu.jsu.mcis.cs310.tas_sp24.Shift;
 import edu.jsu.mcis.cs310.tas_sp24.Badge;
 import java.sql.*;
+import java.time.LocalDateTime;
 import java.util.*;
 
 /**
@@ -151,16 +152,16 @@ public class ShiftDAO {
         Map<String, String> shiftInfo = new HashMap<>();
         
         shiftInfo.put("Description", rs.getString("description"));
+        
         shiftInfo.put("Shift Start", rs.getString("shiftstart"));
         shiftInfo.put("Shift Stop", rs.getString("shiftstop"));
         shiftInfo.put("Lunch Start", rs.getString("lunchstart"));
         shiftInfo.put("Lunch Stop", rs.getString("lunchstop"));
+        
         shiftInfo.put("Round Interval", rs.getString("roundinterval"));
         shiftInfo.put("Grace Period", rs.getString("graceperiod"));
         shiftInfo.put("Dock Penalty", rs.getString("dockpenalty"));
         shiftInfo.put("Lunch Threshold", rs.getString("lunchthreshold"));
-        shiftInfo.put("Lunch Duration", rs.getString("lunchduration"));
-        shiftInfo.put("Shift Duration", rs.getString("shiftduration"));
 
         return new Shift(shiftInfo);
 

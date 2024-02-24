@@ -5,6 +5,7 @@ package edu.jsu.mcis.cs310.tas_sp24;
  */
 
 import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Map;
 
 public class Shift {
@@ -12,23 +13,24 @@ public class Shift {
     private final String description;
     private final int id = 0, roundInterval, gracePeriod, dockPenalty, lunchThreshold;
     private final LocalTime shiftStart, shiftStop, lunchStart, lunchStop;
-    private final int lunchDuration, shiftDuration;
+    private final long lunchDuration, shiftDuration;
     
     // constructor that accepts a Map as argument
     public Shift(Map<String, String> shiftInfo){
-        description = shiftInfo.get("description");
+        description = (String)shiftInfo.get("Description");
         
-        shiftStart = LocalTime.parse(shiftInfo.get("shiftstart"));
-        shiftStop = LocalTime.parse(shiftInfo.get("shiftstop"));
-        lunchStart = LocalTime.parse(shiftInfo.get("lunchstart"));
-        lunchStop = LocalTime.parse(shiftInfo.get("lunchstop"));
+        shiftStart = LocalTime.parse(shiftInfo.get("Shift Start"));
+        shiftStop = LocalTime.parse(shiftInfo.get("Shift Stop"));
+        lunchStart = LocalTime.parse(shiftInfo.get("Lunch Start"));
+        lunchStop = LocalTime.parse(shiftInfo.get("Lunch Stop"));
         
-        roundInterval = Integer.parseInt(shiftInfo.get("roundinterval"));
-        gracePeriod = Integer.parseInt(shiftInfo.get("graceperiod"));
-        dockPenalty = Integer.parseInt(shiftInfo.get("dockpenalty"));
-        lunchThreshold = Integer.parseInt(shiftInfo.get("lunchthreshold"));
-        lunchDuration = Integer.parseInt(shiftInfo.get("lunchduration"));
-        shiftDuration = Integer.parseInt(shiftInfo.get("shiftduration"));
+        roundInterval = Integer.parseInt((String)shiftInfo.get("Round Interval"));
+        gracePeriod = Integer.parseInt((String)shiftInfo.get("Grace Period"));
+        dockPenalty = Integer.parseInt((String)shiftInfo.get("Dock Penalty"));
+        lunchThreshold = Integer.parseInt((String)shiftInfo.get("Lunch Threshold"));
+        
+        lunchDuration = ChronoUnit.MINUTES.between(lunchStart, lunchStop);
+        shiftDuration = ChronoUnit.MINUTES.between(shiftStart, shiftStop);
     }
 
     
@@ -74,11 +76,11 @@ public class Shift {
         return lunchStop;
     }
 
-    public int getLunchDuration() {
+    public long getLunchDuration() {
         return lunchDuration;
     }
 
-    public int getShiftDuration() {
+    public long getShiftDuration() {
         return shiftDuration;
     }
 
