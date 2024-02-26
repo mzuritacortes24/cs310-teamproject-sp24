@@ -51,3 +51,5 @@ public class Main {
 // BLAKE COMMIT
 // WILLIAM COMMIT
 // MERDAN COMMIT 
+// We are in the middle of the Sprint 1. The progress is going well, and we are working on fixing errors, 
+// making the code consistent, and keeping up with the deadline. 
