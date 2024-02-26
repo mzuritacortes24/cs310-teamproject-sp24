@@ -1,7 +1,10 @@
 package edu.jsu.mcis.cs310.tas_sp24;
 import java.time.*;  
 import java.time.format.DateTimeFormatter;
-
+/**
+ *
+ * @author Mauricio
+ */
 public class Employee {
     private int id;
     private String firstname;
