@@ -1,7 +1,10 @@
 package edu.jsu.mcis.cs310.tas_sp24.dao;
 import edu.jsu.mcis.cs310.tas_sp24.Department;
 import java.sql.*;
-
+/**
+ *
+ * @author Denver
+ */
 public class DepartmentDAO {
 
     private static final String QUERY_FIND = "SELECT * FROM department WHERE id = ?";

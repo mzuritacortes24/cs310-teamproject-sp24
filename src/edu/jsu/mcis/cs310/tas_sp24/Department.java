@@ -1,6 +1,8 @@
 package edu.jsu.mcis.cs310.tas_sp24;
-
-
+/**
+ *
+ * @author Denver
+ */
 public class Department {
     private int id;
     private String description;
