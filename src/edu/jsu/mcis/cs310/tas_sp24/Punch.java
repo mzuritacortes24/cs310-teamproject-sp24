@@ -4,6 +4,9 @@ package edu.jsu.mcis.cs310.tas_sp24;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
 
+/**
+ * @author samkb
+ */
 
 public class Punch {
     
@@ -65,13 +68,10 @@ public class Punch {
         
         DateTimeFormatter dTF = DateTimeFormatter.ofPattern("EEE MM/dd/uuuu HH:mm:ss"); /* set print pattern for originaltimestamp */
         
-        StringBuilder sb = new StringBuilder();                                               /* instantiate sb */
-            sb.append("#");                                                                /* append sb with new data */
-            sb.append(badge.getId()).append(" ");                                       /* " */
-            sb.append(punchType.toString()).append(": ");                               /* " */
-            sb.append(originaltimestamp.format(dTF).toUpperCase());                /* " */
-        
-        return sb.toString();
+        return String.format("#%s %s: %s",                                              /* format and return String object */
+                badge.getId(),                                                            /* " */
+                punchType.toString(),                                                     /* " */
+                originaltimestamp.format(dTF).toUpperCase());                     /* " */
         
     }
     
