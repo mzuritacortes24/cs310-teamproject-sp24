@@ -47,17 +47,16 @@ public class PunchDAO {
                     
                     while (rs.next()) {
                         
-                        int terminalid = rs.getInt("terminalid");                           /* populate value for Punch constructor */
+                        int terminalid = rs.getInt("terminalid");                                         /* populate value for Punch constructor */
                         
-                        BadgeDAO badgeDAO = daoFactory.getBadgeDAO();                             /* " */
-                        Badge badge = badgeDAO.find(rs.getString("badgeid"));            /* " */
+                        BadgeDAO badgeDAO = daoFactory.getBadgeDAO();                                           /* " */
+                        Badge badge = badgeDAO.find(rs.getString("badgeid"));                          /* " */
                         
-                        java.sql.Timestamp timestamp = rs.getTimestamp("timestamp");        /* " */
-                        LocalDateTime originaltimestamp = timestamp.toLocalDateTime();            /* " */
+                        LocalDateTime originaltimestamp = rs.getTimestamp("timestamp").toLocalDateTime(); /* " */
                         
-                        EventType punchType = EventType.values()[rs.getInt("eventtypeid")]; /* " */
+                        EventType punchType = EventType.values()[rs.getInt("eventtypeid")];               /* " */
                         
-                        punch = new Punch(terminalid, badge, originaltimestamp, punchType);       /* call Punch object constructor and pass in arguments from database*/
+                        punch = new Punch(terminalid, badge, originaltimestamp, punchType);                     /* call Punch object constructor and pass in arguments from database*/
 
                     }
                     
