@@ -23,7 +23,7 @@ public class Department {
         return description;
     }
 
-    public int getTermanalid() {
+    public int getTerminalid() {
         return terminalid;
     }
 
