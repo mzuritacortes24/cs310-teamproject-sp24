@@ -3,7 +3,7 @@ import edu.jsu.mcis.cs310.tas_sp24.Department;
 import java.sql.*;
 /**
  *
- * @author Denver
+ * @author Denver @author William
  */
 public class DepartmentDAO {
 
