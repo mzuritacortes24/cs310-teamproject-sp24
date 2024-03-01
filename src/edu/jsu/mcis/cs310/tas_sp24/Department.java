@@ -1,7 +1,8 @@
 package edu.jsu.mcis.cs310.tas_sp24;
 /**
  *
- * @author Denver @author William
+ * @author Denver
+ * @author William
  */
 public class Department {
     // Declare Variables
