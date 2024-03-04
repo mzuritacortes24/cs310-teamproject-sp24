@@ -79,4 +79,21 @@ public class EmployeeFindTest {
 
     }
     
+    @Test
+    public void testFindEmployee5() {
+        
+        EmployeeDAO employeeDAO = daoFactory.getEmployeeDAO();
+        BadgeDAO badgeDAO = daoFactory.getBadgeDAO();
+
+        /* Retrieve Employee from Database (by badge) */
+
+        Badge b = badgeDAO.find("3DA8B226");
+        Employee e5 = employeeDAO.find(b);
+
+        /* Compare to Expected Values */
+        
+        assertEquals("ID #29: Hamm, Doris R (#3DA8B226), Type: Temporary / Part-Time, Department: Hafting, Active: 12/19/2015", e5.toString());
+
+    }
+    
 }
