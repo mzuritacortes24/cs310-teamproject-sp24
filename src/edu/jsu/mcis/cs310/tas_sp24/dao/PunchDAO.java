@@ -54,9 +54,9 @@ public class PunchDAO {
                         
                         LocalDateTime originaltimestamp = rs.getTimestamp("timestamp").toLocalDateTime(); /* " */
                         
-                        EventType punchType = EventType.values()[rs.getInt("eventtypeid")];               /* " */
+                        EventType punchtype = EventType.values()[rs.getInt("eventtypeid")];               /* " */
                         
-                        punch = new Punch(terminalid, badge, originaltimestamp, punchType);                     /* call Punch object constructor and pass in arguments from database*/
+                        punch = new Punch(terminalid, badge, originaltimestamp, punchtype);                     /* call Punch object constructor and pass in arguments from database*/
 
                     }
                     
