@@ -5,6 +5,8 @@ import java.util.*;
 import java.time.temporal.ChronoUnit;
 import java.time.format.DateTimeFormatter;
 import com.github.cliftonlabs.json_simple.*;
+import edu.jsu.mcis.cs310.tas_sp24.Punch;
+import edu.jsu.mcis.cs310.tas_sp24.Shift;
                                             
 /**
  * 
@@ -15,4 +17,10 @@ import com.github.cliftonlabs.json_simple.*;
  */
 public final class DAOUtility {
 
+    public static int calculateTotalMinutes(ArrayList<Punch> dailypunchlist, Shift shift){
+        
+        return 1;
+        
+    }
+    
 }
