@@ -366,7 +366,7 @@ public class Punch {
         
     }
 
-    public EventType getPunchType() {
+    public EventType getPunchtype() {
         
         return punchtype;
         
