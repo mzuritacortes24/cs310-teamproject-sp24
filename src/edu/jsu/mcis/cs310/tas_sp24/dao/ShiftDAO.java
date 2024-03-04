@@ -6,8 +6,7 @@ import java.sql.*;
 import java.time.LocalDateTime;
 import java.util.*;
 
-/**
- *
+/*
  * @author blake
  */
 public class ShiftDAO {
@@ -24,28 +23,32 @@ public class ShiftDAO {
 
         Shift shift = null;
         
+        // initializing ps and rs
         PreparedStatement ps = null;
         ResultSet rs = null;
 
         try {
 
+            // initializing connection and query
             Connection conn = daoFactory.getConnection();
             String query = "SELECT * FROM shift WHERE id = ?";
 
             if (conn.isValid(0)) {
-
+                
+                // prepare statement
                 ps = conn.prepareStatement(query);
                 ps.setInt(1, id);
 
                 boolean hasresults = ps.execute();
 
                 if (hasresults) {
-
+                    
+                    // get result set and assign
                     rs = ps.getResultSet();
 
                     while (rs.next()) {
-
-                        //String description = rs.getString("description");
+ 
+                        // create shift
                         shift = createShiftFromResultSet(rs);
 
                     }
@@ -82,18 +85,18 @@ public class ShiftDAO {
     }
      
 
-     
+     // find shift
      public Shift find(Badge badge) {
 
         Shift shift = null;
        
+        // initialize ps and rs
         PreparedStatement ps = null;
         ResultSet rs = null;
 
         try {
 
             Connection conn = daoFactory.getConnection();
-            
             String query = "SELECT shift.* FROM shift INNER JOIN employee ON shift.id = employee.shiftid WHERE employee.badgeid = ?";
 
             if (conn.isValid(0)) {
@@ -105,11 +108,12 @@ public class ShiftDAO {
 
                 if (hasresults) {
 
+                    // get results and assign
                     rs = ps.getResultSet();
 
                     while (rs.next()) {
-
-                        //String description = rs.getString("description");
+                        
+                        // create shift
                         shift = createShiftFromResultSet(rs);
 
                     }
@@ -145,8 +149,7 @@ public class ShiftDAO {
 
     }
 
-    
-    
+    // create shift
     private Shift createShiftFromResultSet(ResultSet rs) throws SQLException {
         
         Map<String, String> shiftInfo = new HashMap<>();
@@ -164,6 +167,5 @@ public class ShiftDAO {
         shiftInfo.put("Lunch Threshold", rs.getString("lunchthreshold"));
 
         return new Shift(shiftInfo);
-
     }
 }
