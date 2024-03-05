@@ -35,7 +35,7 @@ public final class DAOUtility {
                     
                     if(!(((p.getAdjustedtimestamp().getDayOfWeek()) == DayOfWeek.SUNDAY) || ((p.getAdjustedtimestamp().getDayOfWeek()) == DayOfWeek.SATURDAY))){
                     
-                        if(((p.getAdjustedtimestamp().toLocalTime()) == (shift.getLunchStop())) || (p.getAdjustedtimestamp().toLocalTime().isBefore(shift.getLunchStop()))){
+                        if(((p.getAdjustedtimestamp().toLocalTime()) == (shift.getLunchStart())) || (p.getAdjustedtimestamp().toLocalTime().isBefore(shift.getLunchStop()))){
 
                             lunch_out = p.getAdjustedtimestamp();
 
@@ -62,7 +62,7 @@ public final class DAOUtility {
                     
                     if(!(((p.getAdjustedtimestamp().getDayOfWeek()) == DayOfWeek.SUNDAY) || ((p.getAdjustedtimestamp().getDayOfWeek()) == DayOfWeek.SATURDAY))){
                     
-                        if(((p.getAdjustedtimestamp().toLocalTime()) == (shift.getLunchStart())) || (p.getAdjustedtimestamp().toLocalTime().isAfter(shift.getLunchStart()))){
+                        if(((p.getAdjustedtimestamp().toLocalTime()) == (shift.getLunchStop())) || (p.getAdjustedtimestamp().toLocalTime().isAfter(shift.getLunchStart()))){
 
                             lunch_in = p.getAdjustedtimestamp();
 

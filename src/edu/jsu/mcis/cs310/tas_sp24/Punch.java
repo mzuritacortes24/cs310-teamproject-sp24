@@ -51,7 +51,7 @@ public class Punch {
                 
                 if(!((punchdate.getDayOfWeek() == DayOfWeek.SUNDAY) || (punchdate.getDayOfWeek() == DayOfWeek.SATURDAY))){
 
-                    if((punchtime != (s.getLunchStop())) && (!(punchtime.isBefore(s.getLunchStop())))){
+                    if((punchtime != (s.getLunchStart())) && (!(punchtime.isBefore(s.getLunchStop())))){
 
                         if(punchtime.isBefore(s.getShiftStop())){
 
@@ -117,7 +117,7 @@ public class Punch {
                     }
                     
                     
-                    else if((punchtime == (s.getLunchStart())) || ((punchtime.isAfter(s.getLunchStart())))){
+                    else if((punchtime == (s.getLunchStart())) || ((punchtime.isBefore(s.getLunchStop())))){
 
                         adjustedtimestamp = LocalDateTime.of(punchdate, s.getLunchStart());
                         adjustmenttype = PunchAdjustmentType.LUNCH_START;
@@ -196,7 +196,7 @@ public class Punch {
                 
                 if(!((punchdate.getDayOfWeek() == DayOfWeek.SUNDAY) || (punchdate.getDayOfWeek() == DayOfWeek.SATURDAY))){
                     
-                    if((punchtime != (s.getLunchStart())) && (!(punchtime.isAfter(s.getLunchStart())))){
+                    if((punchtime != (s.getLunchStop())) && (!(punchtime.isAfter(s.getLunchStart())))){
 
                         if(punchtime.isAfter(s.getShiftStart())){
 
@@ -261,7 +261,7 @@ public class Punch {
 
                     }
 
-                    else if((punchtime == (s.getLunchStop())) || ((punchtime.isBefore(s.getLunchStop())))){
+                    else if((punchtime == (s.getLunchStop())) || ((punchtime.isAfter(s.getLunchStart())))){
 
                         adjustedtimestamp = LocalDateTime.of(punchdate, s.getLunchStop());
                         adjustmenttype = PunchAdjustmentType.LUNCH_STOP;
