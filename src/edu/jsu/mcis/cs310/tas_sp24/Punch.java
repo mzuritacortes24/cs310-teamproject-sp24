@@ -377,6 +377,12 @@ public class Punch {
         return originaltimestamp;
         
     }
+    
+    public LocalDateTime getAdjustedtimestamp() {
+        
+        return adjustedtimestamp;
+        
+    }
 
     public PunchAdjustmentType getAdjustmenttype() {
         
