@@ -11,6 +11,7 @@ import java.time.temporal.ChronoUnit;
 
 public class Punch {
     
+    int id;
     int terminalid;                                                             /* instantiate instance fields */
     private final Badge badge;                                                  /* " */
     private final EventType punchtype;                                          /* " */
@@ -29,8 +30,9 @@ public class Punch {
         
     }
     
-    public Punch(int terminalid, Badge badge, LocalDateTime originaltimestamp, EventType punchtype){
+    public Punch(int id, int terminalid, Badge badge, LocalDateTime originaltimestamp, EventType punchtype){
         
+        this.id = id;
         this.terminalid = terminalid;                                           /* set instance field equal to parameter */
         this.badge = badge;                                                     /* " */
         this.punchtype = punchtype;                                             /* " */
@@ -51,7 +53,7 @@ public class Punch {
                 
                 if(!((punchdate.getDayOfWeek() == DayOfWeek.SUNDAY) || (punchdate.getDayOfWeek() == DayOfWeek.SATURDAY))){
 
-                    if((punchtime != (s.getLunchStop())) && (!(punchtime.isBefore(s.getLunchStop())))){
+                    if((punchtime != (s.getLunchStart())) && (!(punchtime.isBefore(s.getLunchStop())))){
 
                         if(punchtime.isBefore(s.getShiftStop())){
 
@@ -117,7 +119,7 @@ public class Punch {
                     }
                     
                     
-                    else if((punchtime == (s.getLunchStart())) || ((punchtime.isAfter(s.getLunchStart())))){
+                    else if((punchtime == (s.getLunchStart())) || ((punchtime.isBefore(s.getLunchStop())))){
 
                         adjustedtimestamp = LocalDateTime.of(punchdate, s.getLunchStart());
                         adjustmenttype = PunchAdjustmentType.LUNCH_START;
@@ -196,7 +198,7 @@ public class Punch {
                 
                 if(!((punchdate.getDayOfWeek() == DayOfWeek.SUNDAY) || (punchdate.getDayOfWeek() == DayOfWeek.SATURDAY))){
                     
-                    if((punchtime != (s.getLunchStart())) && (!(punchtime.isAfter(s.getLunchStart())))){
+                    if((punchtime != (s.getLunchStop())) && (!(punchtime.isAfter(s.getLunchStart())))){
 
                         if(punchtime.isAfter(s.getShiftStart())){
 
@@ -261,7 +263,7 @@ public class Punch {
 
                     }
 
-                    else if((punchtime == (s.getLunchStop())) || ((punchtime.isBefore(s.getLunchStop())))){
+                    else if((punchtime == (s.getLunchStop())) || ((punchtime.isAfter(s.getLunchStart())))){
 
                         adjustedtimestamp = LocalDateTime.of(punchdate, s.getLunchStop());
                         adjustmenttype = PunchAdjustmentType.LUNCH_STOP;
@@ -353,6 +355,12 @@ public class Punch {
         }
         
     }
+    
+    public int getId() {
+        
+        return id;
+        
+    }
 
     public int getTerminalid() {
         
@@ -375,6 +383,12 @@ public class Punch {
     public LocalDateTime getOriginaltimestamp() {
         
         return originaltimestamp;
+        
+    }
+    
+    public LocalDateTime getAdjustedtimestamp() {
+        
+        return adjustedtimestamp;
         
     }
 
