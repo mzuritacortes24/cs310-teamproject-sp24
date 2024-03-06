@@ -57,7 +57,7 @@ public class PunchDAO {
                         
                         EventType punchtype = EventType.values()[rs.getInt("eventtypeid")];               /* " */
                         
-                        punch = new Punch(terminalid, badge, originaltimestamp, punchtype);                     /* call Punch object constructor and pass in arguments from database*/
+                        punch = new Punch(id, terminalid, badge, originaltimestamp, punchtype);                     /* call Punch object constructor and pass in arguments from database*/
 
                     }
                     
@@ -156,6 +156,7 @@ public class PunchDAO {
     
         return generatedId; // Return the generated ID or 0 if failed
     }
+    
     public ArrayList<Punch> list(Badge badge, LocalDate date) {
         ArrayList<Punch> punches = new ArrayList<>(); // Initialize list of Punch objects
         String SQL = "SELECT * FROM event WHERE badgeid = ? AND DATE(timestamp) BETWEEN ? AND ? " +
@@ -209,13 +210,14 @@ public class PunchDAO {
     }
     
     private Punch constructPunchFromResultSet(ResultSet rs) throws SQLException {
+        int id = rs.getInt("id");
         int terminalId = rs.getInt("terminalid");
         BadgeDAO badgeDAO = daoFactory.getBadgeDAO();
         Badge foundBadge = badgeDAO.find(rs.getString("badgeid"));
         LocalDateTime originalTimestamp = rs.getTimestamp("timestamp").toLocalDateTime();
         EventType punchType = EventType.values()[rs.getInt("eventtypeid")];
     
-        return new Punch(terminalId, foundBadge, originalTimestamp, punchType);
+        return new Punch(id, terminalId, foundBadge, originalTimestamp, punchType);
     }
     
 }

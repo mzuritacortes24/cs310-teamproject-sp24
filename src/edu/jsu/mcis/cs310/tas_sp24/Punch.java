@@ -11,6 +11,7 @@ import java.time.temporal.ChronoUnit;
 
 public class Punch {
     
+    int id;
     int terminalid;                                                             /* instantiate instance fields */
     private final Badge badge;                                                  /* " */
     private final EventType punchtype;                                          /* " */
@@ -29,8 +30,9 @@ public class Punch {
         
     }
     
-    public Punch(int terminalid, Badge badge, LocalDateTime originaltimestamp, EventType punchtype){
+    public Punch(int id, int terminalid, Badge badge, LocalDateTime originaltimestamp, EventType punchtype){
         
+        this.id = id;
         this.terminalid = terminalid;                                           /* set instance field equal to parameter */
         this.badge = badge;                                                     /* " */
         this.punchtype = punchtype;                                             /* " */
@@ -351,6 +353,12 @@ public class Punch {
             }
             
         }
+        
+    }
+    
+    public int getId() {
+        
+        return id;
         
     }
 
