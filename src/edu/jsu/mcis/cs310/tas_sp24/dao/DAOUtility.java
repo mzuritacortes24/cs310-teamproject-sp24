@@ -5,6 +5,7 @@ import java.util.*;
 import java.time.temporal.ChronoUnit;
 import java.time.format.DateTimeFormatter;
 import com.github.cliftonlabs.json_simple.*;
+import edu.jsu.mcis.cs310.tas_sp24.EventType;
 import edu.jsu.mcis.cs310.tas_sp24.Punch;
 import edu.jsu.mcis.cs310.tas_sp24.Shift;
                                             
@@ -29,65 +30,99 @@ public final class DAOUtility {
         
         for(Punch p : dailypunchlist){
             
-            switch (p.getPunchtype()){
+            if((p.getAdjustedtimestamp().getDayOfWeek() == DayOfWeek.SUNDAY) || (p.getAdjustedtimestamp().getDayOfWeek() == DayOfWeek.SATURDAY)){
                 
-                case CLOCK_OUT -> {
+                weekend = true;
+                
+            }
+            
+            switch (p.getAdjustmenttype()){
+                
+                case NONE -> {
                     
-                    if(!(((p.getAdjustedtimestamp().getDayOfWeek()) == DayOfWeek.SUNDAY) || ((p.getAdjustedtimestamp().getDayOfWeek()) == DayOfWeek.SATURDAY))){
-                    
-                        if(((p.getAdjustedtimestamp().toLocalTime()) == (shift.getLunchStart())) || (p.getAdjustedtimestamp().toLocalTime().isBefore(shift.getLunchStop()))){
-
-                            lunch_out = p.getAdjustedtimestamp();
-
-                        }
+                    switch (p.getPunchtype()) {
                         
-                        else{
+                        case CLOCK_OUT -> {
                             
                             clock_out = p.getAdjustedtimestamp();
-                            
+                        
                         }
                         
-                    }
-                    
-                    else{
-                        
-                        clock_out = p.getAdjustedtimestamp();
-                        weekend = true;
-                        
-                    }
-                    
-                }
-                    
-                case CLOCK_IN -> {
-                    
-                    if(!(((p.getAdjustedtimestamp().getDayOfWeek()) == DayOfWeek.SUNDAY) || ((p.getAdjustedtimestamp().getDayOfWeek()) == DayOfWeek.SATURDAY))){
-                    
-                        if(((p.getAdjustedtimestamp().toLocalTime()) == (shift.getLunchStop())) || (p.getAdjustedtimestamp().toLocalTime().isAfter(shift.getLunchStart()))){
-
-                            lunch_in = p.getAdjustedtimestamp();
-
-                        }
-                        
-                        else{
+                        case CLOCK_IN -> {
                             
                             clock_in = p.getAdjustedtimestamp();
-                            
-                        }
-                    
-                    }
-                    
-                    else{
                         
-                        clock_in = p.getAdjustedtimestamp();
-                        weekend = true;
+                        }
+                        
+                        case TIME_OUT -> {
+                            
+                            time_out = p.getAdjustedtimestamp();
+                        
+                        }
+                        
+                        default -> {
+                        
+                            throw new AssertionError(p.getPunchtype().name());
+                        
+                        }
                         
                     }
                     
                 }
+                
+                case SHIFT_START -> {
                     
-                case TIME_OUT -> {
+                    clock_in = p.getAdjustedtimestamp();
                     
-                    time_out = p.getAdjustedtimestamp();
+                }
+                
+                case SHIFT_STOP -> {
+                    
+                    clock_out = p.getAdjustedtimestamp();
+                    
+                }
+                
+                case SHIFT_DOCK -> {
+                    
+                    if(p.getPunchtype() == EventType.CLOCK_OUT){
+                        
+                        clock_out = p.getAdjustedtimestamp();
+                    
+                    }
+                    
+                    else if(p.getPunchtype() == EventType.CLOCK_IN){
+                        
+                        clock_in = p.getAdjustedtimestamp();
+                        
+                    }
+                    
+                }
+                
+                case LUNCH_START -> {
+                    
+                    lunch_out = p.getAdjustedtimestamp();
+                    
+                }
+                
+                case LUNCH_STOP -> {
+                    
+                    lunch_in = p.getAdjustedtimestamp();
+                    
+                }
+                
+                case INTERVAL_ROUND -> {
+                    
+                    if(p.getPunchtype() == EventType.CLOCK_OUT){
+                        
+                        clock_out = p.getAdjustedtimestamp();
+                    
+                    }
+                    
+                    else if(p.getPunchtype() == EventType.CLOCK_IN){
+                        
+                        clock_in = p.getAdjustedtimestamp();
+                        
+                    }
                     
                 }
                 
