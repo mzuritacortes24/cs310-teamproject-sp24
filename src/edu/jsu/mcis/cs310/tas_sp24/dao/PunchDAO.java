@@ -6,6 +6,7 @@ import edu.jsu.mcis.cs310.tas_sp24.EventType;
 import edu.jsu.mcis.cs310.tas_sp24.Punch;
 import java.sql.*;
 import java.time.*;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 /**
@@ -209,6 +210,23 @@ public class PunchDAO {
         return punches;
     }
     
+    
+    public ArrayList<Punch> list (Badge badge, LocalDate start, LocalDate end) {
+
+        ArrayList<Punch> punches = new ArrayList();
+        LocalDate givenDate = start;
+
+        for(int i = 0; i <= ChronoUnit.DAYS.between(start, end); i++) {
+
+            punches.addAll(list(badge, givenDate));
+
+            givenDate = givenDate.plusDays(1);
+
+        }
+
+        return punches;
+    }
+
     private Punch constructPunchFromResultSet(ResultSet rs) throws SQLException {
         int id = rs.getInt("id");
         int terminalId = rs.getInt("terminalid");
