@@ -10,7 +10,8 @@ import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 /**
- * @author samkb
+ * @author samkb 
+ * @author mgarlyyev
  */
 
 public class PunchDAO {
@@ -212,14 +213,20 @@ public class PunchDAO {
     
     
     public ArrayList<Punch> list (Badge badge, LocalDate start, LocalDate end) {
-
+        
+        // Initialize an empty list list to store the punches
         ArrayList<Punch> punches = new ArrayList();
+        
+        // Initialize a LocalDate variable
         LocalDate givenDate = start;
 
+        // Iterate through each date within the specified range
         for(int i = 0; i <= ChronoUnit.DAYS.between(start, end); i++) {
 
+            // Retrieve punches for the current date and add them to the list
             punches.addAll(list(badge, givenDate));
-
+            
+            // Move to the next date in the iteration
             givenDate = givenDate.plusDays(1);
 
         }
