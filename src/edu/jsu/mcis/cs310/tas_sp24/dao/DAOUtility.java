@@ -10,7 +10,7 @@ import com.github.cliftonlabs.json_simple.*;
 import edu.jsu.mcis.cs310.tas_sp24.EventType;
 import edu.jsu.mcis.cs310.tas_sp24.Punch;
 import edu.jsu.mcis.cs310.tas_sp24.Shift;
-import com.github.cliftonlabs.json_simple.*;
+import edu.jsu.mcis.cs310.tas_sp24.Badge;
                                             
 /**
  * 
@@ -176,20 +176,20 @@ public final class DAOUtility {
 /**
  * @author blake
  */
-    
+  
 public static String getPunchListAsJSON(ArrayList<Punch> dailypunchlist) {
     ArrayList<HashMap<String, String>> jsonData = new ArrayList<>();
 
     for (Punch punch : dailypunchlist) {
         HashMap<String, String> punchData = new HashMap<>();
 
-        punchData.put("id", String.valueOf(punch.getId()));
+        punchData.put("originaltimestamp", punch.printOriginal());
         punchData.put("badgeid", punch.getBadge().getId());
+        punchData.put("adjustedtimestamp", punch.printAdjusted());
+        punchData.put("adjustmenttype", punch.getAdjustmenttype().toString());
         punchData.put("terminalid", String.valueOf(punch.getTerminalid()));
         punchData.put("punchtype", punch.getPunchtype().toString());
-        punchData.put("punchadjustmenttype", punch.getAdjustmenttype().toString());
-        punchData.put("priginaltimestamp", punch.printOriginal());
-        punchData.put("adjustedtimestamp", punch.printAdjusted());
+        punchData.put("id", String.valueOf(Badge.getId().toString()));
 
         jsonData.add(punchData);
     }
@@ -198,6 +198,5 @@ public static String getPunchListAsJSON(ArrayList<Punch> dailypunchlist) {
 
     return json;
 }
-
     
 }
