@@ -2,6 +2,8 @@ package edu.jsu.mcis.cs310.tas_sp24.dao;
 
 import java.time.*;
 import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.time.temporal.ChronoUnit;
 import java.time.format.DateTimeFormatter;
 import com.github.cliftonlabs.json_simple.*;
@@ -9,6 +11,7 @@ import edu.jsu.mcis.cs310.tas_sp24.Badge;
 import edu.jsu.mcis.cs310.tas_sp24.EventType;
 import edu.jsu.mcis.cs310.tas_sp24.Punch;
 import edu.jsu.mcis.cs310.tas_sp24.Shift;
+import java.text.DecimalFormat;
                                          
 /**
  * 
@@ -170,6 +173,7 @@ public final class DAOUtility {
         return totalminutes;
         
     }
+    
     // getPunchListAsJSON Function
     @SuppressWarnings("null")
     public static String getPunchListAsJSON(ArrayList<Punch> dailypunchlist)  {
@@ -193,5 +197,37 @@ public final class DAOUtility {
     
     }
     
-    
+    public static String getPunchListPlusTotalAsJSON(ArrayList<Punch> punchlist, Shift shift){
+        JsonObject json = new JsonObject();
+        JsonArray punchArray = new JsonArray();
+        
+        DecimalFormat df = new DecimalFormat("#.00");
+        
+        long totalMinutes = calculateTotalMinutes(punchlist, shift);
+        String absenteeism = df.format(calculateAbsenteeism(punchlist, shift)) + "%";   //NOTE: calculateAbsenteeism is a placeholder variable
+        
+        Badge badge = null; 
+        
+        ArrayList<HashMap<String, String>> punchlistData = new ArrayList<>();
+        
+        for (Punch punch : punchlist) {
+            HashMap<String, String> punchData = new HashMap<>();
+            punchData.put("id", String.valueOf(badge.getId().toString()));
+            punchData.put("badgeid", punch.getBadge().toString());
+            punchData.put("terminalid", String.valueOf(punch.getTerminalid()));
+            punchData.put("punchtype", punch.getPunchtype().toString());
+            punchData.put("adjustmenttype", punch.getAdjustmenttype().toString());
+            punchData.put("originaltimestamp", punch.getOriginaltimestamp().toString());
+            punchData.put("adjustedtimestamp", punch.getAdjustedtimestamp().toString());
+
+            punchlistData.add(punchData);
+        }
+        
+        json.put("absenteesim", absenteeism);
+        json.put("totalminutes", String.valueOf(totalMinutes));
+        json.put("punchlist", punchArray);
+        
+        return Jsoner.serialize(json);
+    }
+     
 }
