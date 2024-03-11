@@ -7,11 +7,11 @@ import java.util.HashMap;
 import java.time.temporal.ChronoUnit;
 import java.time.format.DateTimeFormatter;
 import com.github.cliftonlabs.json_simple.*;
+import edu.jsu.mcis.cs310.tas_sp24.Badge;
 import edu.jsu.mcis.cs310.tas_sp24.EventType;
 import edu.jsu.mcis.cs310.tas_sp24.Punch;
 import edu.jsu.mcis.cs310.tas_sp24.Shift;
-import edu.jsu.mcis.cs310.tas_sp24.Badge;
-                                            
+                                         
 /**
  * 
  * Utility class for DAOs.  This is a final, non-constructable class containing
@@ -173,30 +173,27 @@ public final class DAOUtility {
         
     }
     
-/**
- * @author blake
- */
-  
-public static String getPunchListAsJSON(ArrayList<Punch> dailypunchlist) {
-    ArrayList<HashMap<String, String>> jsonData = new ArrayList<>();
+    // getPunchListAsJSON Function
+    @SuppressWarnings("null")
+    public static String getPunchListAsJSON(ArrayList<Punch> dailypunchlist)  {
+        Badge badge = null;
+        ArrayList<HashMap<String, String>> jsonData = new ArrayList<>();
 
-    for (Punch punch : dailypunchlist) {
-        HashMap<String, String> punchData = new HashMap<>();
+        for (Punch punch : dailypunchlist) {
+            HashMap<String, String> punchData = new HashMap<>();
+            punchData.put("id", String.valueOf(badge.getId().toString()));
+            punchData.put("badgeid", punch.getBadge().toString());
+            punchData.put("terminalid", String.valueOf(punch.getTerminalid()));
+            punchData.put("punchtype", punch.getPunchtype().toString());
+            punchData.put("adjustmenttype", punch.getAdjustmenttype().toString());
+            punchData.put("originaltimestamp", punch.getOriginaltimestamp().toString());
+            punchData.put("adjustedtimestamp", punch.getAdjustedtimestamp().toString());
 
-        punchData.put("originaltimestamp", punch.printOriginal());
-        punchData.put("badgeid", punch.getBadge().getId());
-        punchData.put("adjustedtimestamp", punch.printAdjusted());
-        punchData.put("adjustmenttype", punch.getAdjustmenttype().toString());
-        punchData.put("terminalid", String.valueOf(punch.getTerminalid()));
-        punchData.put("punchtype", punch.getPunchtype().toString());
-        punchData.put("id", String.valueOf(Badge.getId().toString()));
+            jsonData.add(punchData);
+        }
 
-        jsonData.add(punchData);
-    }
-
-    String json = Jsoner.serialize(jsonData);
-
-    return json;
-}
+        return Jsoner.serialize(jsonData);
     
+    }
+     
 }
