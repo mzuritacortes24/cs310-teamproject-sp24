@@ -46,6 +46,7 @@ public class Punch {
         
         LocalTime punchtime = originaltimestamp.toLocalTime();
         LocalDate punchdate = originaltimestamp.toLocalDate();
+        boolean midnightroundup = false;
         
         switch(punchtype){
             
@@ -67,28 +68,46 @@ public class Punch {
                             else if((((ChronoUnit.MINUTES.between( punchtime, s.getShiftStop())) > s.getRoundInterval()))){
                                 
                                 try{
-                                    
+                        
                                     if(punchtime.getSecond() > (Duration.ofMinutes(1).getSeconds() / 2)){
-                                        
+
                                         punchtime = punchtime.plusMinutes(1);
-                                        
+
                                     }
-                                    
+
                                     punchtime = punchtime.withSecond(0).withNano(0);
-                                    
+
+                                    if(!(Math.abs(ChronoUnit.MINUTES.between(punchtime, LocalTime.MIDNIGHT)) > s.getRoundInterval())){
+                                        
+                                        midnightroundup = true;
+
+                                    }
+
                                     punchtime = punchtime.withMinute((Math.round((float)(((float)punchtime.getMinute()) / s.getRoundInterval()))*s.getRoundInterval()));
 
                                 }
                                 catch(Exception e){
-                                    
+
+                                    midnightroundup = false;
+
                                     punchtime = punchtime.withMinute(0).plusHours(1);
-                                        
+
                                     if(punchtime.equals(LocalTime.MIDNIGHT)){
-                                            
+
                                         punchdate = punchdate.plusDays(1);
-                                        
+
                                     }
-                                    
+
+                                }
+
+                                if(midnightroundup){
+
+                                    if(punchtime.equals(LocalTime.MIDNIGHT)){
+
+                                        punchdate = punchdate.plusDays(1);
+
+                                    }
+
                                 }
 
                                 adjustedtimestamp = LocalDateTime.of(punchdate, punchtime);
@@ -129,28 +148,45 @@ public class Punch {
                     else{
 
                         try{
-                            
+
                             if(punchtime.getSecond() > (Duration.ofMinutes(1).getSeconds() / 2)){
 
                                 punchtime = punchtime.plusMinutes(1);
 
                             }
-                            
+
                             punchtime = punchtime.withSecond(0).withNano(0);
+
+                            if(!(Math.abs(ChronoUnit.MINUTES.between(punchtime, LocalTime.MIDNIGHT)) > s.getRoundInterval())){
+                                midnightroundup = true;
+
+                            }
 
                             punchtime = punchtime.withMinute((Math.round((float)(((float)punchtime.getMinute()) / s.getRoundInterval()))*s.getRoundInterval()));
 
                         }
                         catch(Exception e){
-                                    
+
+                            midnightroundup = false;
+
                             punchtime = punchtime.withMinute(0).plusHours(1);
-                                        
+
                             if(punchtime.equals(LocalTime.MIDNIGHT)){
-                                            
+
                                 punchdate = punchdate.plusDays(1);
-                                        
+
                             }
-                                    
+
+                        }
+
+                        if(midnightroundup){
+                            
+                            if(punchtime.equals(LocalTime.MIDNIGHT)){
+
+                                punchdate = punchdate.plusDays(1);
+
+                            }
+
                         }
 
                         adjustedtimestamp = LocalDateTime.of(punchdate, punchtime);
@@ -172,19 +208,37 @@ public class Punch {
                         
                         punchtime = punchtime.withSecond(0).withNano(0);
                         
+                        if(!(Math.abs(ChronoUnit.MINUTES.between(punchtime, LocalTime.MIDNIGHT)) > s.getRoundInterval())){                            
+                            
+                            midnightroundup = true;
+                            
+                        }
+                        
                         punchtime = punchtime.withMinute((Math.round((float)(((float)punchtime.getMinute()) / s.getRoundInterval()))*s.getRoundInterval()));
                         
                     }
                     catch(Exception e){
+                        
+                        midnightroundup = false;
                                     
                         punchtime = punchtime.withMinute(0).plusHours(1);
-                                        
+                                                              
                         if(punchtime.equals(LocalTime.MIDNIGHT)){
                                             
                             punchdate = punchdate.plusDays(1);
                                         
                         }
                                     
+                    }
+                    
+                    if(midnightroundup){
+                        
+                        if(punchtime.equals(LocalTime.MIDNIGHT)){
+                                            
+                            punchdate = punchdate.plusDays(1);
+                                        
+                        }
+                        
                     }
                     
                     adjustedtimestamp = LocalDateTime.of(punchdate, punchtime);
@@ -212,33 +266,51 @@ public class Punch {
                             else if((((ChronoUnit.MINUTES.between(s.getShiftStart(), punchtime)) > s.getRoundInterval()))){
                                 
                                 try{
-
+                        
                                     if(punchtime.getSecond() > (Duration.ofMinutes(1).getSeconds() / 2)){
 
                                         punchtime = punchtime.plusMinutes(1);
 
                                     }
-                                    
+
                                     punchtime = punchtime.withSecond(0).withNano(0);
+
+                                    if(!(Math.abs(ChronoUnit.MINUTES.between(punchtime, LocalTime.MIDNIGHT)) > s.getRoundInterval())){
+                                        
+                                        midnightroundup = true;
+
+                                    }
 
                                     punchtime = punchtime.withMinute((Math.round((float)(((float)punchtime.getMinute()) / s.getRoundInterval()))*s.getRoundInterval()));
 
                                 }
                                 catch(Exception e){
-                                    
+
+                                    midnightroundup = false;
+
                                     punchtime = punchtime.withMinute(0).plusHours(1);
-                                        
+
                                     if(punchtime.equals(LocalTime.MIDNIGHT)){
-                                            
+
                                         punchdate = punchdate.plusDays(1);
-                                        
+
                                     }
-                                    
+
+                                }
+
+                                if(midnightroundup){
+
+                                    if(punchtime.equals(LocalTime.MIDNIGHT)){
+
+                                        punchdate = punchdate.plusDays(1);
+
+                                    }
+
                                 }
 
                                 adjustedtimestamp = LocalDateTime.of(punchdate, punchtime);
                                 adjustmenttype = PunchAdjustmentType.INTERVAL_ROUND;
-
+                                
                             }
 
                             else if((ChronoUnit.MINUTES.between(s.getShiftStart(), punchtime)) <= s.getGracePeriod()){
@@ -274,33 +346,51 @@ public class Punch {
                     else{
 
                         try{
-                            
+                        
                             if(punchtime.getSecond() > (Duration.ofMinutes(1).getSeconds() / 2)){
 
                                 punchtime = punchtime.plusMinutes(1);
 
                             }
-                            
+
                             punchtime = punchtime.withSecond(0).withNano(0);
+
+                            if(!(Math.abs(ChronoUnit.MINUTES.between(punchtime, LocalTime.MIDNIGHT)) > s.getRoundInterval())){                                
+                                
+                                midnightroundup = true;
+
+                            }
 
                             punchtime = punchtime.withMinute((Math.round((float)(((float)punchtime.getMinute()) / s.getRoundInterval()))*s.getRoundInterval()));
 
                         }
                         catch(Exception e){
-                                    
+
+                            midnightroundup = false;
+
                             punchtime = punchtime.withMinute(0).plusHours(1);
-                                        
+
                             if(punchtime.equals(LocalTime.MIDNIGHT)){
-                                            
+
                                 punchdate = punchdate.plusDays(1);
-                                        
+
                             }
-                                    
+
+                        }
+
+                        if(midnightroundup){
+
+                            if(punchtime.equals(LocalTime.MIDNIGHT)){
+
+                                punchdate = punchdate.plusDays(1);
+
+                            }
+
                         }
 
                         adjustedtimestamp = LocalDateTime.of(punchdate, punchtime);
                         adjustmenttype = PunchAdjustmentType.INTERVAL_ROUND;
-
+                    
                     }
                     
                 }
@@ -317,19 +407,37 @@ public class Punch {
                         
                         punchtime = punchtime.withSecond(0).withNano(0);
                         
+                        if(!(Math.abs(ChronoUnit.MINUTES.between(punchtime, LocalTime.MIDNIGHT)) > s.getRoundInterval())){                            
+                           
+                            midnightroundup = true;
+                            
+                        }
+                        
                         punchtime = punchtime.withMinute((Math.round((float)(((float)punchtime.getMinute()) / s.getRoundInterval()))*s.getRoundInterval()));
                         
                     }
                     catch(Exception e){
+                        
+                        midnightroundup = false;
                                     
                         punchtime = punchtime.withMinute(0).plusHours(1);
-                                        
+                                                              
                         if(punchtime.equals(LocalTime.MIDNIGHT)){
                                             
                             punchdate = punchdate.plusDays(1);
                                         
                         }
                                     
+                    }
+                    
+                    if(midnightroundup){
+                        
+                        if(punchtime.equals(LocalTime.MIDNIGHT)){
+                                            
+                            punchdate = punchdate.plusDays(1);
+                                        
+                        }
+                        
                     }
                     
                     adjustedtimestamp = LocalDateTime.of(punchdate, punchtime);

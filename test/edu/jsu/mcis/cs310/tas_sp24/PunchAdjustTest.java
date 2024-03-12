@@ -1,6 +1,8 @@
 package edu.jsu.mcis.cs310.tas_sp24;
 
 import edu.jsu.mcis.cs310.tas_sp24.dao.*;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import org.junit.*;
 import static org.junit.Assert.*;
 
@@ -188,6 +190,23 @@ public class PunchAdjustTest {
         assertEquals("#ADD650A8 CLOCK OUT: TUE 09/11/2018 15:37:12", p7.printOriginal());
         assertEquals("#ADD650A8 CLOCK OUT: TUE 09/11/2018 15:30:00 (Shift Stop)", p7.printAdjusted());
 
+    }
+    
+    @Test
+    public void testAdjustPunchesDayRollOver() {
+        
+        PunchDAO punchDAO = daoFactory.getPunchDAO();
+        ShiftDAO shiftDAO = daoFactory.getShiftDAO();
+        
+        Shift s1 = shiftDAO.find(1);
+        
+        Punch p1 = punchDAO.find(6894);
+                
+        p1.adjust(s1);
+        
+        assertEquals("#00000000 CLOCK OUT: SAT 01/01/2000 23:59:31", p1.printOriginal());
+        assertEquals("#00000000 CLOCK OUT: SUN 01/02/2000 00:00:00 (Interval Round)", p1.printAdjusted());
+        
     }
 
 }
