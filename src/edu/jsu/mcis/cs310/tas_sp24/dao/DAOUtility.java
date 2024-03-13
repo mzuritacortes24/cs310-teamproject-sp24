@@ -24,23 +24,23 @@ public final class DAOUtility {
 
     public static int calculateTotalMinutes(ArrayList<Punch> dailypunchlist, Shift shift){
         
-        int totalminutes = 0;
-        LocalDateTime clock_in = null;
-        LocalDateTime clock_out = null;
-        LocalDateTime lunch_in = null;
-        LocalDateTime lunch_out = null;
-        LocalDateTime time_out = null;
-        Boolean weekend = false;
+        int totalminutes = 0;                                                   /* initialize variables to hold punches */
+        LocalDateTime clock_in = null;                                          /*  */
+        LocalDateTime clock_out = null;                                         /*  */
+        LocalDateTime lunch_in = null;                                          /*  */
+        LocalDateTime lunch_out = null;                                         /*  */
+        LocalDateTime time_out = null;                                          /*  */
+        Boolean weekend = false;                                                /*  */
         
         for(Punch p : dailypunchlist){
             
-            if((p.getAdjustedtimestamp().getDayOfWeek() == DayOfWeek.SUNDAY) || (p.getAdjustedtimestamp().getDayOfWeek() == DayOfWeek.SATURDAY)){
+            if((p.getAdjustedtimestamp().getDayOfWeek() == DayOfWeek.SUNDAY) || (p.getAdjustedtimestamp().getDayOfWeek() == DayOfWeek.SATURDAY)){   /* check to see if the punch falls on a weekend */
                 
                 weekend = true;
                 
             }
             
-            switch (p.getAdjustmenttype()){
+            switch (p.getAdjustmenttype()){                                     /* sort punches based on adjustment type and event type */
                 
                 case NONE -> {
                     
@@ -142,7 +142,7 @@ public final class DAOUtility {
         
         try{
             
-            totalminutes = (int) ChronoUnit.MINUTES.between(clock_in, clock_out);
+            totalminutes = (int) ChronoUnit.MINUTES.between(clock_in, clock_out);                               /* try to calculate minutes assuming both upper and lower bounds exist */
         
         }
         catch(Exception e){}
@@ -151,18 +151,18 @@ public final class DAOUtility {
             
             try{
 
-                if((lunch_out.toLocalTime().equals(shift.getLunchStart())) && (lunch_in.toLocalTime().equals(shift.getLunchStop()))){
+                if((lunch_out.toLocalTime().equals(shift.getLunchStart())) && (lunch_in.toLocalTime().equals(shift.getLunchStop()))){   /* check for lunch break taken */
 
-                    totalminutes = (int) (totalminutes - shift.getLunchDuration());
+                    totalminutes = (int) (totalminutes - shift.getLunchDuration());                                                           /* subtract lunch break from total time */
 
                 }
 
             }
             catch(Exception e){
                 
-                if(totalminutes >= shift.getLunchThreshold()){
+                if(totalminutes >= shift.getLunchThreshold()){                                                                                /* check if lunch threshold has been reached */
                     
-                    totalminutes = (int) (totalminutes - shift.getLunchDuration());
+                    totalminutes = (int) (totalminutes - shift.getLunchDuration());                                                           /* subtract lunch break from total time */
                 
                 }
 
