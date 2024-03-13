@@ -77,7 +77,7 @@ public class Punch {
 
                                     punchtime = punchtime.withSecond(0).withNano(0);                                                                                                                                                                        /* clear seconds and nanoseconds */
 
-                                    if((ChronoUnit.MINUTES.between(punchtime, LocalTime.MIDNIGHT)) > s.getRoundInterval() && (ChronoUnit.MINUTES.between(punchtime, LocalTime.MIDNIGHT)) > 0){                  /* check if day will be changed due to midnight round up */                                                                                 /* check to see if  */
+                                    if((ChronoUnit.MINUTES.between(punchtime, LocalTime.MIDNIGHT)) <= s.getRoundInterval() && (ChronoUnit.MINUTES.between(punchtime, LocalTime.MIDNIGHT)) >= 0){                                                                            /* check if day will be changed due to midnight round up */                                                                                 /* check to see if  */
                                         
                                         midnightroundup = true;                                                                                                                                                                                                             /* set flag if round up is needed */
 
@@ -157,7 +157,7 @@ public class Punch {
 
                             punchtime = punchtime.withSecond(0).withNano(0);                                                                                                                                                                                /*  */
 
-                           if((ChronoUnit.MINUTES.between(punchtime, LocalTime.MIDNIGHT)) > s.getRoundInterval() && (ChronoUnit.MINUTES.between(punchtime, LocalTime.MIDNIGHT)) > 0){                           /*  */
+                            if((ChronoUnit.MINUTES.between(punchtime, LocalTime.MIDNIGHT)) <= s.getRoundInterval() && (ChronoUnit.MINUTES.between(punchtime, LocalTime.MIDNIGHT)) >= 0){                                                                                    /*  */
                                 
                                midnightroundup = true;                                                                                                                                                                                                                      /*  */                         
 
@@ -209,7 +209,7 @@ public class Punch {
                         
                         punchtime = punchtime.withSecond(0).withNano(0);                                                                                                                                                                                    /*  */
                         
-                        if((ChronoUnit.MINUTES.between(punchtime, LocalTime.MIDNIGHT)) > s.getRoundInterval() && (ChronoUnit.MINUTES.between(punchtime, LocalTime.MIDNIGHT)) > 0){                              /*  */
+                        if((ChronoUnit.MINUTES.between(punchtime, LocalTime.MIDNIGHT)) <= s.getRoundInterval() && (ChronoUnit.MINUTES.between(punchtime, LocalTime.MIDNIGHT)) >= 0){                                                                                        /*  */
                             
                             midnightroundup = true;                                                                                                                                                                                                                         /*  */
                             
@@ -276,7 +276,7 @@ public class Punch {
 
                                     punchtime = punchtime.withSecond(0).withNano(0);                                                                                                                                                                        /*  */
 
-                                    if((ChronoUnit.MINUTES.between(punchtime, LocalTime.MIDNIGHT)) > s.getRoundInterval() && (ChronoUnit.MINUTES.between(punchtime, LocalTime.MIDNIGHT)) > 0){                  /*  */
+                                    if((ChronoUnit.MINUTES.between(punchtime, LocalTime.MIDNIGHT)) <= s.getRoundInterval() && (ChronoUnit.MINUTES.between(punchtime, LocalTime.MIDNIGHT)) >= 0){                                                                            /*  */
                                         
                                         midnightroundup = true;                                                                                                                                                                                                             /*  */
 
@@ -356,7 +356,7 @@ public class Punch {
 
                             punchtime = punchtime.withSecond(0).withNano(0);                                                                                                                                                                                /*  */
 
-                            if((ChronoUnit.MINUTES.between(punchtime, LocalTime.MIDNIGHT)) > s.getRoundInterval() && (ChronoUnit.MINUTES.between(punchtime, LocalTime.MIDNIGHT)) > 0){                          /*  */      
+                            if((ChronoUnit.MINUTES.between(punchtime, LocalTime.MIDNIGHT)) <= s.getRoundInterval() && (ChronoUnit.MINUTES.between(punchtime, LocalTime.MIDNIGHT)) >= 0){                                                                                    /*  */      
                              
                                 midnightroundup = true;                                                                                                                                                                                                                     /*  */
 
@@ -408,7 +408,7 @@ public class Punch {
                         
                         punchtime = punchtime.withSecond(0).withNano(0);                                                                                                                                                                                    /*  */
                         
-                        if((ChronoUnit.MINUTES.between(punchtime, LocalTime.MIDNIGHT)) > s.getRoundInterval() && (ChronoUnit.MINUTES.between(punchtime, LocalTime.MIDNIGHT)) > 0){                              /*  */
+                        if((ChronoUnit.MINUTES.between(punchtime, LocalTime.MIDNIGHT)) <= s.getRoundInterval() && (ChronoUnit.MINUTES.between(punchtime, LocalTime.MIDNIGHT)) >= 0){                                                        /*  */
                            
                             midnightroundup = true;                                                                                                                                                                                                                         /*  */
                             
