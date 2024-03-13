@@ -241,7 +241,7 @@ public class PunchDAO {
         Badge foundBadge = badgeDAO.find(rs.getString("badgeid"));
         LocalDateTime originalTimestamp = rs.getTimestamp("timestamp").toLocalDateTime();
         EventType punchType = EventType.values()[rs.getInt("eventtypeid")];
-    
+        
         return new Punch(id, terminalId, foundBadge, originalTimestamp, punchType);
     }
     
