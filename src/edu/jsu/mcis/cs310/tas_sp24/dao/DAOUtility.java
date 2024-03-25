@@ -147,6 +147,17 @@ public final class DAOUtility {
         }
         catch(Exception e){}
         
+        try{
+            
+            if((lunch_out != null) && (lunch_in == null)){
+                
+                totalminutes = (int) ChronoUnit.MINUTES.between(clock_in, lunch_out);                           /* try to calculate minutes assuming both upper and lower bounds exist */
+                
+            }
+            
+        }
+        catch(Exception e){}
+        
         if(!(weekend)){
             
             try{
@@ -197,7 +208,7 @@ public final class DAOUtility {
     
     }
     
-    public static String getPunchListPlusTotalAsJSON(ArrayList<Punch> punchlist, Shift shift){
+    public static String getPunchListPlusTotalsAsJSON(ArrayList<Punch> punchlist, Shift shift){
         JsonObject json = new JsonObject();
         JsonArray punchArray = new JsonArray();
         

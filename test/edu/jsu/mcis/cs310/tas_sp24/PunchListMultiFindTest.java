@@ -35,19 +35,19 @@ public class PunchListMultiFindTest {
         
         ArrayList<Punch> expectedPunches = new ArrayList<>();
 
-
+        // Retrieve punches for each day within the date range
         for (LocalDate date = startDate; date.isBefore(endDate.plusDays(1)); date = date.plusDays(1)) {
             expectedPunches.addAll(punchDAO.list(badge, date));
         }
 
-
+        // Export expected punch list contents to StringBuilder
         for (Punch p : expectedPunches) {
             expectedOutput.append(p.printOriginal()).append("\n");
         }
 
         ArrayList<Punch> actualPunches = punchDAO.list(badge, startDate, endDate);
 
-
+        // Export actual punch list contents to StringBuilder
         for (Punch p : actualPunches) {
             actualOutput.append(p.printOriginal()).append("\n");
         }
@@ -69,19 +69,19 @@ public class PunchListMultiFindTest {
         Badge badge = badgeDAO.find("87176FD7");
         ArrayList<Punch> expectedPunches = new ArrayList<>();
 
-
+        // Retrieve punches for each day within the date range
         for (LocalDate date = startDate; date.isBefore(endDate.plusDays(1)); date = date.plusDays(1)) {
             expectedPunches.addAll(punchDAO.list(badge, date));
         }
 
-
+        // Export expected punch list contents to StringBuilder
         for (Punch p : expectedPunches) {
             expectedOutput.append(p.printOriginal()).append("\n");
         }
 
         ArrayList<Punch> actualPunches = punchDAO.list(badge, startDate, endDate);
 
-
+        // Export actual punch list contents to StringBuilder
         for (Punch p : actualPunches) {
             actualOutput.append(p.printOriginal()).append("\n");
         }
@@ -103,19 +103,19 @@ public class PunchListMultiFindTest {
         Badge badge = badgeDAO.find("95497F63");
         ArrayList<Punch> expectedPunches = new ArrayList<>();
 
-
+        // Retrieve punches for each day within the date range
         for (LocalDate date = startDate; date.isBefore(endDate.plusDays(1)); date = date.plusDays(1)) {
             expectedPunches.addAll(punchDAO.list(badge, date));
         }
 
-
+        // Export expected punch list contents to StringBuilder
         for (Punch p : expectedPunches) {
             expectedOutput.append(p.printOriginal()).append("\n");
         }
 
         ArrayList<Punch> actualPunches = punchDAO.list(badge, startDate, endDate);
 
-
+        // Export actual punch list contents to StringBuilder
         for (Punch p : actualPunches) {
             actualOutput.append(p.printOriginal()).append("\n");
         }
@@ -137,19 +137,19 @@ public class PunchListMultiFindTest {
         Badge badge = badgeDAO.find("67637925");
         ArrayList<Punch> expectedPunches = new ArrayList<>();
 
-
+        // Retrieve punches for each day within the date range
         for (LocalDate date = startDate; date.isBefore(endDate.plusDays(1)); date = date.plusDays(1)) {
             expectedPunches.addAll(punchDAO.list(badge, date));
         }
 
-
+        // Export expected punch list contents to StringBuilder
         for (Punch p : expectedPunches) {
             expectedOutput.append(p.printOriginal()).append("\n");
         }
 
         ArrayList<Punch> actualPunches = punchDAO.list(badge, startDate, endDate);
 
-
+        // Export actual punch list contents to StringBuilder
         for (Punch p : actualPunches) {
             actualOutput.append(p.printOriginal()).append("\n");
         }
