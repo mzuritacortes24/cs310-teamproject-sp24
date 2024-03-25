@@ -339,7 +339,6 @@ public final class DAOUtility {
         System.out.println(weekday.toString());
         double scheduledMinutes = (double) (shift.getShiftDuration() - shift.getLunchDuration());    
 
-        // totalMinutes += 300;
         System.out.println("Total Minutes worked: "+ (totalMinutes));
         System.out.println("Minutes Scehduled: " + (scheduledMinutes * 5));
         System.out.println("Difference: " + ((scheduledMinutes * 5)- totalMinutes));
