@@ -12,6 +12,9 @@ import java.time.LocalDateTime;
  */
 public class EmployeeDAO {
     
+    private static final String QUERY_FIND1 = "SELECT * FROM employee WHERE id = ?";
+    private static final String QUERY_FIND2 = "SELECT * FROM employee WHERE badgeid = ?";
+    
     private final DAOFactory daoFactory;
 
     // Constructor: Initializes the DAO with a factory for creating connections
@@ -24,7 +27,6 @@ public class EmployeeDAO {
         
         PreparedStatement ps = null;
         ResultSet rs = null;
-        String SQL = "SELECT * FROM employee WHERE id = ?";
 
         try {
             // Get a connection from the DAO factory
@@ -34,7 +36,7 @@ public class EmployeeDAO {
             if (conn.isValid(0)) {
 
                 // Prepare the SQL statement
-                ps = conn.prepareStatement(SQL);
+                ps = conn.prepareStatement(QUERY_FIND1);
                 ps.setInt(1, id);
 
                 // Execute the query
@@ -78,7 +80,6 @@ public class EmployeeDAO {
     public Employee find(Badge badge) {
         PreparedStatement ps = null;
         ResultSet rs = null;
-        String SQL = "SELECT * FROM employee WHERE badgeid = ?";
 
         try {
             // Get a connection from the DAO factory
@@ -87,7 +88,7 @@ public class EmployeeDAO {
             // Check if the connection is valid
             if (conn.isValid(0)) {
                 // Prepare the SQL statement
-                ps = conn.prepareStatement(SQL);
+                ps = conn.prepareStatement(QUERY_FIND2);
                 ps.setString(1, badge.getId());
 
                 // Execute the query
