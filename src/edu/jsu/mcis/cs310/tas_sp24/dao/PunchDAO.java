@@ -176,7 +176,7 @@ public class PunchDAO {
                 ps = conn.prepareStatement(SQL);
                 ps.setString(1, badge.getId());
                 ps.setDate(2, java.sql.Date.valueOf(date));
-                ps.setDate(3, java.sql.Date.valueOf(date.plusDays(0)));
+                ps.setDate(3, java.sql.Date.valueOf(date));
 
                 boolean hasResults = ps.execute();
     

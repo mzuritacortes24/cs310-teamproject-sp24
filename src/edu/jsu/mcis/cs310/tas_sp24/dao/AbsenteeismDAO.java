@@ -5,10 +5,12 @@ import java.time.LocalDate;
 import java.math.BigDecimal;
 import edu.jsu.mcis.cs310.tas_sp24.Absenteeism;
 import edu.jsu.mcis.cs310.tas_sp24.Employee;
+import java.time.DayOfWeek;
+import java.time.temporal.TemporalAdjusters;
 
 public class AbsenteeismDAO {
 
-    private static final String QUERY_FIND = "SELECT * FROM Absenteeism WHERE employee_id = ? AND pay_period = ?";
+    private static final String QUERY_FIND = "SELECT * FROM absenteeism WHERE employeeid = ? AND payperiod = ?";
     
     private final DAOFactory daoFactory;
 
@@ -35,7 +37,7 @@ public class AbsenteeismDAO {
 
                     if (rs.next()) { 
                         BigDecimal percentage = rs.getBigDecimal("percentage");
-                        absenteeism = new Absenteeism(employee, payPeriod.atStartOfDay(), percentage);
+                        absenteeism = new Absenteeism(employee, payPeriod.with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY)), percentage);
                     }
                 }
             }
@@ -59,5 +61,40 @@ public class AbsenteeismDAO {
         } 
 
         return absenteeism;
+    }
+
+    public void create (Absenteeism absenteeism)    {
+        PreparedStatement ps = null;
+
+        // SQL query to insert a new record or update an existing one
+        String SQL = "INSERT INTO absenteeism (employeeid, payperiod, percentage) VALUES (?, ?, ?) " +
+        "ON DUPLICATE KEY UPDATE percentage = VALUES(percentage);";
+         
+        try {
+            Connection conn = daoFactory.getConnection();
+            if (conn.isValid(0)) {
+                ps = conn.prepareStatement(SQL);
+
+                // Set the parameters for the PreparedStatement from the Absenteeism object.
+                ps.setInt(1, absenteeism.getEmployee().getId());
+                ps.setDate(2, java.sql.Date.valueOf(absenteeism.getPayPeriod())); // Convert LocalDate to java.sql.Date
+                ps.setBigDecimal(3, absenteeism.getPercentage());
+
+                // Execute the update.
+                ps.executeUpdate();
+
+            
+            }
+        } catch (SQLException e) {
+            throw new DAOException(e.getMessage());
+        } finally {
+            if (ps != null) {
+                try {
+                    ps.close();
+                } catch (SQLException e) {
+                    throw new DAOException(e.getMessage());
+                }
+            }
+        }
     }
 }
