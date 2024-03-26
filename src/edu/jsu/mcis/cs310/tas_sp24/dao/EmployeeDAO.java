@@ -134,22 +134,22 @@ public class EmployeeDAO {
     }
     // Maps a row of the result set to an Employee object
     public Employee mapToEmployee(ResultSet rs) throws SQLException {
-       // Extract employee details from the result set
-       int id = rs.getInt("id");
-       String firstname = rs.getString("firstname");
-       String middlename = rs.getString("middlename");
-       String lastname = rs.getString("lastname");
-       LocalDateTime active = rs.getTimestamp("active").toLocalDateTime();
-       String badgeId = rs.getString("badgeid");
-       int departmentId = rs.getInt("departmentid");
-       int shiftId = rs.getInt("shiftid");
-       EmployeeType employeeType = EmployeeType.values()[rs.getInt("employeetypeid")];
+        // Extract employee details from the result set
+        int id = rs.getInt("id");
+        String firstname = rs.getString("firstname");
+        String middlename = rs.getString("middlename");
+        String lastname = rs.getString("lastname");
+        LocalDateTime active = rs.getTimestamp("active").toLocalDateTime();
+        String badgeId = rs.getString("badgeid");
+        int departmentId = rs.getInt("departmentid");
+        int shiftId = rs.getInt("shiftid");
+        EmployeeType employeeType = EmployeeType.values()[rs.getInt("employeetypeid")];
        
-       // Use DAOFactory to find related objects by their IDs
-       Badge badge = daoFactory.getBadgeDAO().find(badgeId);
-       Department department = daoFactory.getDepartmentDAO().find(departmentId);
-       Shift shift = daoFactory.getShiftDAO().find(shiftId);
-       // Return a new Employee object constructed with the extracted details
-       return new Employee(id, firstname, middlename, lastname, active, badge, department, shift, employeeType);
+        // Use DAOFactory to find related objects by their IDs
+        Badge badge = daoFactory.getBadgeDAO().find(badgeId);
+        Department department = daoFactory.getDepartmentDAO().find(departmentId);
+        Shift shift = daoFactory.getShiftDAO().find(shiftId);
+        // Return a new Employee object constructed with the extracted details
+        return new Employee(id, firstname, middlename, lastname, active, badge, department, shift, employeeType);
     }
 }

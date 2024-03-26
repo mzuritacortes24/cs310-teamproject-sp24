@@ -16,7 +16,9 @@ import java.util.*;
 
 public class PunchDAO {
     
-    private static final String QUERY_FIND = "SELECT * FROM event WHERE id = ?";/* prepare statement for selection */
+    private static final String QUERY_FIND1 = "SELECT * FROM event WHERE id = ?";/* prepare statement for selection */
+    private static final String QUERY_FIND2 = "INSERT INTO event (terminalid, badgeid, timestamp, eventtypeid) VALUES (?, ?, ?, ?)"; /*"*/
+    private static final String QUERY_FIND3 = "SELECT * FROM event WHERE badgeid = ? AND DATE(timestamp) BETWEEN ? AND ? " + "ORDER BY timestamp ASC";/*"*/
     
     private final DAOFactory daoFactory;                                        /* instantiate DAOFactory object */
     
@@ -39,7 +41,7 @@ public class PunchDAO {
             
             if(conn.isValid(0)) {
                 
-                ps = conn.prepareStatement(QUERY_FIND);                   /* set ps equal to statement string */
+                ps = conn.prepareStatement(QUERY_FIND1);                   /* set ps equal to statement string */
                 ps.setInt(1, id);                                          /* pass arguments into ps */
             
                 boolean hasresults = ps.execute();                              /* execute statement and return true/false */
@@ -106,19 +108,25 @@ public class PunchDAO {
         return punch;
         
     }
+
+    // Create method for Punch using Punch object
     public int create(Punch punch) {
-        int generatedId = 0; // Default to 0, indicating failure
-        String SQL = "INSERT INTO event (terminalid, badgeid, timestamp, eventtypeid) VALUES (?, ?, ?, ?)";
+
+        // Default to 0, indicating failure
+        int generatedId = 0; 
     
         PreparedStatement ps = null;
         ResultSet rs = null;
     
         try {
-            Connection conn = daoFactory.getConnection(); // Connect to database
-    
+            // Get a connection from the DAO factory
+            Connection conn = daoFactory.getConnection(); 
+            
+            // Check if the connection is valid 
             if (conn.isValid(0)) {
                 
-                ps = conn.prepareStatement(SQL, Statement.RETURN_GENERATED_KEYS);
+                // Prepare the SQL statement
+                ps = conn.prepareStatement(QUERY_FIND2, Statement.RETURN_GENERATED_KEYS);
     
                 ps.setInt(1, punch.getTerminalid());
                 ps.setString(2, punch.getBadge().getId());
@@ -127,13 +135,17 @@ public class PunchDAO {
     
                 int affectedRows = ps.executeUpdate();
     
+                // Incase it does not create punch
                 if (affectedRows == 0) {
                     throw new SQLException("Creating punch failed, no rows affected.");
                 }
-                    rs = ps.getGeneratedKeys();
+                
+                // Process the result set
+                rs = ps.getGeneratedKeys();
                 
                 while (rs.next()) {
-                    generatedId = rs.getInt(1); // Get the generated key for the inserted punch
+                    // Get the generated key for the inserted punch
+                    generatedId = rs.getInt(1); 
                 }
             }
         } catch (SQLException e) {
@@ -159,31 +171,37 @@ public class PunchDAO {
         return generatedId; // Return the generated ID or 0 if failed
     }
     
+    // List method for Punch using Badge object and LocalDate
     public ArrayList<Punch> list(Badge badge, LocalDate date) {
-        ArrayList<Punch> punches = new ArrayList<>(); // Initialize list of Punch objects
-        String SQL = "SELECT * FROM event WHERE badgeid = ? AND DATE(timestamp) BETWEEN ? AND ? " +
-                                    "ORDER BY timestamp ASC";
+
+        // Initialize list of Punch objects
+        ArrayList<Punch> punches = new ArrayList<>(); 
     
         PreparedStatement ps = null;
         ResultSet rs = null;
     
         try {
-            Connection conn = daoFactory.getConnection(); // Connect to database
+            // Get a connection from the DAO factory
+            Connection conn = daoFactory.getConnection(); 
     
+            // Check if the connection is valid
             if (conn.isValid(0)) {
-                // Adjust SQL to match your SQL query for retrieving punches
-                
-                ps = conn.prepareStatement(SQL);
+                // Prepare the SQL statement   
+                ps = conn.prepareStatement(QUERY_FIND3);
                 ps.setString(1, badge.getId());
                 ps.setDate(2, java.sql.Date.valueOf(date));
                 ps.setDate(3, java.sql.Date.valueOf(date));
 
+                // Execute the query
                 boolean hasResults = ps.execute();
     
                 if (hasResults) {
+                    // Process the result set
                     rs = ps.getResultSet();
     
                     while (rs.next()) {
+                        // Map the current row of the result set to the method
+                        // then add to Punch ArrayList
                         punches.add(constructPunchFromResultSet(rs));
                     }
                 }
@@ -234,6 +252,7 @@ public class PunchDAO {
         return punches;
     }
 
+    // A method for the List method for Punch using the ResultSet 
     private Punch constructPunchFromResultSet(ResultSet rs) throws SQLException {
         int id = rs.getInt("id");
         int terminalId = rs.getInt("terminalid");
