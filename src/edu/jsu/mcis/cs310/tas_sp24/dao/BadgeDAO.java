@@ -5,7 +5,7 @@ import java.sql.*;
 
 public class BadgeDAO {
 
-    private static final String QUERY_FIND1 = "SELECT * FROM badge WHERE id = ?";
+    private static final String QUERY_FIND1 = "SELECT * FROM badge WHERE id = ?"; 
     private static final String QUERY_FIND2 = "INSERT INTO badge (id, description) VALUES (?, ?)";
     private static final String QUERY_FIND3 = "DELETE FROM badge WHERE id = ?";
 
@@ -77,17 +77,24 @@ public class BadgeDAO {
 
     }
 
+    // Added boolean create method
     public boolean create(Badge badge)   {
+        
         PreparedStatement ps = null;
+        
         try  {
+        
             Connection conn = daoFactory.getConnection();
+            
             if (conn.isValid(0))   {
+            
                 ps = conn.prepareStatement(QUERY_FIND2);
                 ps.setString(1, badge.getId());
                 ps.setString(2, badge.getDescription());
                 
                 int rowsAffected = ps.executeUpdate();
                 return rowsAffected == 1;
+                
             }
         }catch (SQLException e) {
             throw new DAOException(e.getMessage());
@@ -103,6 +110,7 @@ public class BadgeDAO {
         return false;
     }
     
+    // Added boolean delete method
     public boolean delete(String badgeId)   {
         
         PreparedStatement ps = null;

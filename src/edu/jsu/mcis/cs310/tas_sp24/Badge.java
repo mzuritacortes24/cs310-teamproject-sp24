@@ -17,10 +17,11 @@ public class Badge {
         this.id = generateIdFromDescription(description);
     }
 
-    private String generateIdFromDescription(String description) {
+    private String generateIdFromDescription(String description) {   
         Checksum crc = new CRC32();
         crc.update(description.getBytes(), 0, description.length());
         long checksumValue = crc.getValue();
+        
         // Convert to 8-digit hexadecimal string
         return String.format("%08X", checksumValue);
     }
