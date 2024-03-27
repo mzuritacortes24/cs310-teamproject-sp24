@@ -10,32 +10,45 @@ import java.time.temporal.TemporalAdjusters;
 
 public class AbsenteeismDAO {
 
-    private static final String QUERY_FIND = "SELECT * FROM absenteeism WHERE employeeid = ? AND payperiod = ?";
+    private static final String QUERY_FIND1 = "SELECT * FROM absenteeism WHERE employeeid = ? AND payperiod = ?";
+    private static final String QUERY_FIND2 = "INSERT INTO absenteeism (employeeid, payperiod, percentage) VALUES (?, ?, ?) " +
+                                              "ON DUPLICATE KEY UPDATE percentage = VALUES(percentage);";
     
     private final DAOFactory daoFactory;
 
+    // Constructor: Initializes the DAO with a factory for creating connections
     public AbsenteeismDAO(DAOFactory daoFactory) {
         this.daoFactory = daoFactory;
     }
 
+    // Find Employee and their pay period
     public Absenteeism find(Employee employee, LocalDate payPeriod) {
+
         Absenteeism absenteeism = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
 
         try {
+            // Get a connection from the DAO factory 
             Connection conn = daoFactory.getConnection();
+
+            // Check if the connection is valid
             if (conn.isValid(0)) {
-                ps = conn.prepareStatement(QUERY_FIND); 
+
+                // Prepare the SQL Statement
+                ps = conn.prepareStatement(QUERY_FIND1); 
                 ps.setInt(1, employee.getId()); 
                 ps.setDate(2, java.sql.Date.valueOf(payPeriod)); 
 
+                // Execute the query
                 boolean hasResults = ps.execute(); 
 
                 if (hasResults) {
+                    // Process the result set
                     rs = ps.getResultSet(); 
 
-                    if (rs.next()) { 
+                    while (rs.next()) { 
+                        // Gets current row of the result set to an Absenteeism object
                         BigDecimal percentage = rs.getBigDecimal("percentage");
                         absenteeism = new Absenteeism(employee, payPeriod.with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY)), percentage);
                     }
@@ -63,17 +76,19 @@ public class AbsenteeismDAO {
         return absenteeism;
     }
 
+    // Create method for Absenteeism using an Absenteeism object
     public void create (Absenteeism absenteeism)    {
+        
         PreparedStatement ps = null;
-
-        // SQL query to insert a new record or update an existing one
-        String SQL = "INSERT INTO absenteeism (employeeid, payperiod, percentage) VALUES (?, ?, ?) " +
-        "ON DUPLICATE KEY UPDATE percentage = VALUES(percentage);";
          
         try {
+            // Get a connection from the DAO factory
             Connection conn = daoFactory.getConnection();
+
+            // Check if the connection is valid
             if (conn.isValid(0)) {
-                ps = conn.prepareStatement(SQL);
+                // Prepare the SQL statement
+                ps = conn.prepareStatement(QUERY_FIND2);
 
                 // Set the parameters for the PreparedStatement from the Absenteeism object.
                 ps.setInt(1, absenteeism.getEmployee().getId());
