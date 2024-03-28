@@ -275,9 +275,9 @@ public final class DAOUtility {
 
         double scheduledMinutes = (double) ((shift.getShiftDuration() - shift.getLunchDuration())*5);
         
-        double absenteeism = Math.round(((scheduledMinutes - workedMinutes)/scheduledMinutes)*100);
+        double percentage = Math.round(((scheduledMinutes - workedMinutes)/scheduledMinutes)*100);
 
-        return BigDecimal.valueOf(absenteeism);
+        return BigDecimal.valueOf(percentage);
         
     }
      
