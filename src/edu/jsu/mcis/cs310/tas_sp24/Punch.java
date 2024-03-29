@@ -133,6 +133,57 @@ public class Punch {
                                 
                             }
                             
+                            else if(((ChronoUnit.MINUTES.between( s.getShiftStop(), punchtime)) > s.getRoundInterval()) && ((ChronoUnit.MINUTES.between( s.getShiftStop(), punchtime)%15) != 0)){                                                                                                                      /* check if punch is within the interval period */
+                                
+                                try{
+                                    
+                                    if(punchtime.getSecond() > (Duration.ofMinutes(1).getSeconds() / 2)){                                                                                                                                                             /* check if seconds are greater than 30 */
+
+                                        punchtime = punchtime.plusMinutes(1);                                                                                                                                                                                     /* add minute if seconds are greater */
+
+                                    }
+
+                                    punchtime = punchtime.withSecond(0).withNano(0);                                                                                                                                                                        /* clear seconds and nanoseconds */
+
+                                    if((ChronoUnit.MINUTES.between(punchtime, LocalTime.MIDNIGHT)) <= s.getRoundInterval() && (ChronoUnit.MINUTES.between(punchtime, LocalTime.MIDNIGHT)) >= 0){                                                                            /* check if day will be changed due to midnight round up */                                                                                 /* check to see if  */
+                                        
+                                        midnightroundup = true;                                                                                                                                                                                                             /* set flag if round up is needed */
+
+                                    }
+
+                                    punchtime = punchtime.withMinute((Math.round((float)(((float)punchtime.getMinute()) / s.getRoundInterval()))*s.getRoundInterval()));                                                                                                    /* round minutes to nearest interval */
+
+                                }
+                                catch(Exception e){
+
+                                    midnightroundup = false;                                                                                                                                                                                                                /* set midnight round up flag to false */
+
+                                    punchtime = punchtime.withMinute(0).plusHours(1);                                                                                                                                                                        /* add hour due to minute overflow */
+
+                                    if(punchtime.equals(LocalTime.MIDNIGHT)){                                                                                                                                                                                            /* check to see if time is equal to midnight */
+
+                                        punchdate = punchdate.plusDays(1);                                                                                                                                                                                          /* add day if time is midnight */
+
+                                    }
+
+                                }
+
+                                if(midnightroundup){                                                                                                                                                                                                                        /* check for round up flag */
+
+                                    if(punchtime.equals(LocalTime.MIDNIGHT)){                                                                                                                                                                                            /* double check punch is equal to midnight */
+
+                                        punchdate = punchdate.plusDays(1);                                                                                                                                                                                          /* add day to punch */                
+
+                                    }
+
+                                }
+
+                                adjustedtimestamp = LocalDateTime.of(punchdate, punchtime);                                                                                                                                                                         /* set values of adjusted time stamp */
+                                adjustmenttype = PunchAdjustmentType.INTERVAL_ROUND; 
+                                
+                            }
+ 
+                            
                         }
 
                     }
@@ -332,6 +383,56 @@ public class Punch {
                                 
                             }
                             
+                            else if(((ChronoUnit.MINUTES.between(punchtime, s.getShiftStart())) > s.getRoundInterval()) && ((ChronoUnit.MINUTES.between(punchtime, s.getShiftStart())%15) != 0)){                                                                                                                      /* check if punch is within the interval period */
+                                
+                                try{
+                        
+                                    if(punchtime.getSecond() > (Duration.ofMinutes(1).getSeconds() / 2)){                                                                                                                                                             /*  */
+
+                                        punchtime = punchtime.plusMinutes(1);                                                                                                                                                                                     /*  */
+
+                                    }
+
+                                    punchtime = punchtime.withSecond(0).withNano(0);                                                                                                                                                                        /*  */
+
+                                    if((ChronoUnit.MINUTES.between(punchtime, LocalTime.MIDNIGHT)) <= s.getRoundInterval() && (ChronoUnit.MINUTES.between(punchtime, LocalTime.MIDNIGHT)) >= 0){                                                                            /*  */
+                                        
+                                        midnightroundup = true;                                                                                                                                                                                                             /*  */
+
+                                    }
+
+                                    punchtime = punchtime.withMinute((Math.round((float)(((float)punchtime.getMinute()) / s.getRoundInterval()))*s.getRoundInterval()));                                                                                                    /*  */
+
+                                }
+                                catch(Exception e){
+
+                                    midnightroundup = false;                                                                                                                                                                                                                /*  */
+
+                                    punchtime = punchtime.withMinute(0).plusHours(1);                                                                                                                                                                        /*  */
+
+                                    if(punchtime.equals(LocalTime.MIDNIGHT)){                                                                                                                                                                                            /*  */
+
+                                        punchdate = punchdate.plusDays(1);                                                                                                                                                                                          /*  */
+
+                                    }
+
+                                }
+
+                                if(midnightroundup){                                                                                                                                                                                                                        /*  */
+
+                                    if(punchtime.equals(LocalTime.MIDNIGHT)){                                                                                                                                                                                            /*  */
+
+                                        punchdate = punchdate.plusDays(1);                                                                                                                                                                                          /*  */
+
+                                    }
+
+                                }
+
+                                adjustedtimestamp = LocalDateTime.of(punchdate, punchtime);                                                                                                                                                                         /*  */
+                                adjustmenttype = PunchAdjustmentType.INTERVAL_ROUND;  
+                                
+                            }
+ 
                         }
 
                     }

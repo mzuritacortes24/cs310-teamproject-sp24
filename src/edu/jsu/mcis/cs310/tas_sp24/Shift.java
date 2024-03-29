@@ -4,8 +4,10 @@ package edu.jsu.mcis.cs310.tas_sp24;
  * @author blake
  */
 
+import java.time.DayOfWeek;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
+import java.util.HashMap;
 import java.util.Map;
 
 public class Shift {
@@ -13,6 +15,7 @@ public class Shift {
     private String description;
     private final int id;
     private final DailySchedule defaultschedule;
+    private final HashMap weeklyschedule = new HashMap();
     private final long lunchDuration, shiftDuration;
     
     // constructor that accepts a Map as argument
@@ -72,6 +75,10 @@ public class Shift {
     
     public DailySchedule getDefaultSchedule() {
         return defaultschedule;
+    }
+    
+    public DailySchedule getDailySchedule() {
+        return 
     }
 
     public long getLunchDuration() {
