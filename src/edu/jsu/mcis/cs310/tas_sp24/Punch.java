@@ -53,8 +53,8 @@ public class Punch {
             case CLOCK_OUT -> {
                 
                 if(!((punchdate.getDayOfWeek() == DayOfWeek.SUNDAY) || (punchdate.getDayOfWeek() == DayOfWeek.SATURDAY))){                                                                                                                                                  /* check for weekend */
-
-                    if((punchtime != (s.getLunchStart())) && (!(punchtime.isBefore(s.getLunchStop())))){                                                                                                                                                               /* check for lunch break */
+                        
+                    if((punchtime != (s.getLunchStart())) && (punchtime.isAfter(s.getLunchStop()))){                                                                                                                                                               /* check for lunch break */
 
                         if(punchtime.isBefore(s.getShiftStop())){                                                                                                                                                                                                      /* check if punch is prior to the shift end */
 
@@ -66,9 +66,9 @@ public class Punch {
                             }
                             
                             else if((((ChronoUnit.MINUTES.between( punchtime, s.getShiftStop())) > s.getRoundInterval()))){                                                                                                                   /* check if punch is outside the interval period */
-                                
+                                                              
                                 try{
-                        
+                                    
                                     if(punchtime.getSecond() > (Duration.ofMinutes(1).getSeconds() / 2)){                                                                                                                                                             /* check if seconds are greater than 30 */
 
                                         punchtime = punchtime.plusMinutes(1);                                                                                                                                                                                     /* add minute if seconds are greater */
@@ -146,7 +146,7 @@ public class Punch {
                     }
 
                     else{
-
+                                            
                         try{
 
                             if(punchtime.getSecond() > (Duration.ofMinutes(1).getSeconds() / 2)){                                                                                                                                                                     /*  */
@@ -253,7 +253,7 @@ public class Punch {
                 
                 if(!((punchdate.getDayOfWeek() == DayOfWeek.SUNDAY) || (punchdate.getDayOfWeek() == DayOfWeek.SATURDAY))){                                                                                                                                                  /* check for weekend */
                     
-                    if((punchtime != (s.getLunchStop())) && (!(punchtime.isAfter(s.getLunchStart())))){                                                                                                                                                                /* check for lunch break */
+                    if((punchtime != (s.getLunchStop())) && (punchtime.isBefore(s.getLunchStart()))){                                                                                                                                                                /* check for lunch break */
 
                         if(punchtime.isAfter(s.getShiftStart())){                                                                                                                                                                                                      /* check if punch is after shift start */
 

@@ -19,6 +19,10 @@ public class ShiftDAO {
 
     }
     
+    private static final String QUERY_FIND_ID = "SELECT * FROM shift WHERE id = ?";
+    private static final String QUERY_FIND_BADGE = "SELECT shift.* FROM shift INNER JOIN employee ON shift.id = employee.shiftid WHERE employee.badgeid = ?";
+    private static final String QUERY_GET_DAILYSCHEDULE = "SELECT * FROM dailyschedule WHERE id = ?";
+    
      public Shift find(int id) {
 
         Shift shift = null;
@@ -26,30 +30,42 @@ public class ShiftDAO {
         // initializing ps and rs
         PreparedStatement ps = null;
         ResultSet rs = null;
+        
+        PreparedStatement ps2 = null;
+        ResultSet rs2 = null;
 
         try {
 
             // initializing connection and query
             Connection conn = daoFactory.getConnection();
-            String query = "SELECT * FROM shift WHERE id = ?";
 
             if (conn.isValid(0)) {
                 
                 // prepare statement
-                ps = conn.prepareStatement(query);
+                ps = conn.prepareStatement(QUERY_FIND_ID);
                 ps.setInt(1, id);
 
-                boolean hasresults = ps.execute();
-
-                if (hasresults) {
+                if (ps.execute()) {
                     
                     // get result set and assign
                     rs = ps.getResultSet();
-
+                    
                     while (rs.next()) {
- 
-                        // create shift
-                        shift = createShiftFromResultSet(rs);
+                        // create shift  
+                        ps2 = conn.prepareStatement(QUERY_GET_DAILYSCHEDULE);
+                        ps2.setInt(1, rs.getInt("dailyscheduleid"));
+                          
+                        if (ps2.execute()) {
+                            
+                            rs2 = ps2.getResultSet();
+                        
+                            while(rs2.next()){
+                                
+                                shift = createShiftFromResultSet(rs, rs2);
+                                
+                            }
+                        
+                        }
 
                     }
 
@@ -59,7 +75,7 @@ public class ShiftDAO {
 
         } catch (SQLException e) {
 
-            throw new DAOException(e.getMessage());
+            //throw new DAOException(e.getMessage());
 
         } finally {
 
@@ -93,29 +109,41 @@ public class ShiftDAO {
         // initialize ps and rs
         PreparedStatement ps = null;
         ResultSet rs = null;
+        
+        PreparedStatement ps2 = null;
+        ResultSet rs2 = null;
 
         try {
 
             Connection conn = daoFactory.getConnection();
-            String query = "SELECT shift.* FROM shift INNER JOIN employee ON shift.id = employee.shiftid WHERE employee.badgeid = ?";
 
             if (conn.isValid(0)) {
 
-                ps = conn.prepareStatement(query);
+                ps = conn.prepareStatement(QUERY_FIND_BADGE);
                 ps.setString(1, badge.getId());
 
-                boolean hasresults = ps.execute();
-
-                if (hasresults) {
+                if (ps.execute()) {
 
                     // get results and assign
                     rs = ps.getResultSet();
 
                     while (rs.next()) {
+                        // create shift  
+                        ps2 = conn.prepareStatement(QUERY_GET_DAILYSCHEDULE);
+                        ps2.setInt(1, rs.getInt("dailyscheduleid"));
                         
-                        // create shift
-                        shift = createShiftFromResultSet(rs);
-
+                        if (ps2.execute()) {
+                        
+                            rs2 = ps2.getResultSet();
+                            
+                            while(rs2.next()){
+                                
+                                shift = createShiftFromResultSet(rs, rs2);
+                                
+                            }
+                        
+                        }
+                        
                     }
 
                 }
@@ -124,7 +152,7 @@ public class ShiftDAO {
 
         } catch (SQLException e) {
 
-            throw new DAOException(e.getMessage());
+            //throw new DAOException(e.getMessage());
 
         } finally {
 
@@ -150,22 +178,23 @@ public class ShiftDAO {
     }
 
     // create shift
-    private Shift createShiftFromResultSet(ResultSet rs) throws SQLException {
+    private Shift createShiftFromResultSet(ResultSet rs, ResultSet rs2) throws SQLException {
         
         Map<String, String> shiftInfo = new HashMap<>();
-        
-        shiftInfo.put("Description", rs.getString("description"));
-        
-        shiftInfo.put("Shift Start", rs.getString("shiftstart"));
-        shiftInfo.put("Shift Stop", rs.getString("shiftstop"));
-        shiftInfo.put("Lunch Start", rs.getString("lunchstart"));
-        shiftInfo.put("Lunch Stop", rs.getString("lunchstop"));
-        
-        shiftInfo.put("Round Interval", rs.getString("roundinterval"));
-        shiftInfo.put("Grace Period", rs.getString("graceperiod"));
-        shiftInfo.put("Dock Penalty", rs.getString("dockpenalty"));
-        shiftInfo.put("Lunch Threshold", rs.getString("lunchthreshold"));
 
+        shiftInfo.put("description", rs.getString("description"));
+        shiftInfo.put("id", rs.getString("id"));
+        shiftInfo.put("shiftstart", rs2.getString("shiftstart"));
+        shiftInfo.put("shiftstop", rs2.getString("shiftstop"));
+        shiftInfo.put("lunchstart", rs2.getString("lunchstart"));
+        shiftInfo.put("lunchstop", rs2.getString("lunchstop"));
+        shiftInfo.put("graceperiod", rs2.getString("graceperiod"));
+        shiftInfo.put("roundinterval", rs2.getString("roundinterval"));
+        shiftInfo.put("dockpenalty", rs2.getString("dockpenalty"));
+        shiftInfo.put("lunchthreshold", rs2.getString("lunchthreshold"));
+        
         return new Shift(shiftInfo);
+        
     }
+    
 }
