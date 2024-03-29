@@ -60,4 +60,33 @@ public class BadgeFindTest {
 
     }
     
+    @Test
+    public void testFindBadge4() {
+        
+        BadgeDAO badgeDAO = daoFactory.getBadgeDAO();
+
+        /* Retrieve Badges from Database */
+
+        Badge b4 = badgeDAO.find("9E06A774");
+
+        /* Compare to Expected Values */
+        
+        assertEquals("#9E06A774 (Foster, Amanda J)", b4.toString());
+
+    }
+    
+    @Test
+    public void testFindBadge5() {
+        
+        BadgeDAO badgeDAO = daoFactory.getBadgeDAO();
+
+        /* Retrieve Badges from Database */
+
+        Badge b5 = badgeDAO.find("3DA8B226");
+
+        /* Compare to Expected Values */
+        
+        assertEquals("#3DA8B226 (Hamm, Doris R)", b5.toString());
+
+    }
 }
