@@ -77,9 +77,9 @@ public class Shift {
         return defaultschedule;
     }
     
-    public DailySchedule getDailySchedule() {
+    /*public DailySchedule getDailySchedule() {
         return 
-    }
+    }*/
 
     public long getLunchDuration() {
         return lunchDuration;

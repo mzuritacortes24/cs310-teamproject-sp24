@@ -133,7 +133,7 @@ public class Punch {
                                 
                             }
                             
-                            else if(((ChronoUnit.MINUTES.between( s.getShiftStop(), punchtime)) > s.getRoundInterval()) && ((ChronoUnit.MINUTES.between( s.getShiftStop(), punchtime)%15) != 0)){                                                                                                                      /* check if punch is within the interval period */
+                            else if(((ChronoUnit.MINUTES.between( s.getShiftStop(), punchtime)) > s.getRoundInterval()) && ((ChronoUnit.MINUTES.between( s.getShiftStop(), punchtime.withSecond(0))%15) != 0)){                                                                                                                      /* check if punch is within the interval period */
                                 
                                 try{
                                     
@@ -383,7 +383,7 @@ public class Punch {
                                 
                             }
                             
-                            else if(((ChronoUnit.MINUTES.between(punchtime, s.getShiftStart())) > s.getRoundInterval()) && ((ChronoUnit.MINUTES.between(punchtime, s.getShiftStart())%15) != 0)){                                                                                                                      /* check if punch is within the interval period */
+                            else if(((ChronoUnit.MINUTES.between(punchtime, s.getShiftStart())) > s.getRoundInterval()) && ((ChronoUnit.MINUTES.between(punchtime.withSecond(0), s.getShiftStart())%15) != 0)){                                                                                                                      /* check if punch is within the interval period */
                                 
                                 try{
                         
