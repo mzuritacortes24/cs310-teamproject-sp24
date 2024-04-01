@@ -7,7 +7,11 @@ import edu.jsu.mcis.cs310.tas_sp24.Absenteeism;
 import edu.jsu.mcis.cs310.tas_sp24.Employee;
 import java.time.DayOfWeek;
 import java.time.temporal.TemporalAdjusters;
-
+/**
+ * @author Mauricio
+ * @author Denver
+ * @author William
+ */
 public class AbsenteeismDAO {
 
     private static final String QUERY_FIND1 = "SELECT * FROM absenteeism WHERE employeeid = ? AND payperiod = ?";

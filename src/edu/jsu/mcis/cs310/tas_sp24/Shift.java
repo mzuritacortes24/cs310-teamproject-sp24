@@ -4,33 +4,30 @@ package edu.jsu.mcis.cs310.tas_sp24;
  * @author blake
  */
 
+import java.time.DayOfWeek;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
+import java.util.HashMap;
 import java.util.Map;
 
 public class Shift {
     // initializing fields
-    private final String description;
-    private final int id = 0, roundInterval, gracePeriod, dockPenalty, lunchThreshold;
-    private final LocalTime shiftStart, shiftStop, lunchStart, lunchStop;
+    private String description;
+    private final int id;
+    private final DailySchedule defaultschedule;
+    private final HashMap weeklyschedule = new HashMap();
     private final long lunchDuration, shiftDuration;
     
     // constructor that accepts a Map as argument
     public Shift(Map<String, String> shiftInfo){
-        description = (String)shiftInfo.get("Description");
+        this.description = (String)shiftInfo.get("description");
+        this.id = Integer.parseInt(shiftInfo.get("id"));
         
-        shiftStart = LocalTime.parse(shiftInfo.get("Shift Start"));
-        shiftStop = LocalTime.parse(shiftInfo.get("Shift Stop"));
-        lunchStart = LocalTime.parse(shiftInfo.get("Lunch Start"));
-        lunchStop = LocalTime.parse(shiftInfo.get("Lunch Stop"));
+        this.defaultschedule = new DailySchedule(shiftInfo);
         
-        roundInterval = Integer.parseInt((String)shiftInfo.get("Round Interval"));
-        gracePeriod = Integer.parseInt((String)shiftInfo.get("Grace Period"));
-        dockPenalty = Integer.parseInt((String)shiftInfo.get("Dock Penalty"));
-        lunchThreshold = Integer.parseInt((String)shiftInfo.get("Lunch Threshold"));
-        
-        lunchDuration = ChronoUnit.MINUTES.between(lunchStart, lunchStop);
-        shiftDuration = ChronoUnit.MINUTES.between(shiftStart, shiftStop);
+        this.lunchDuration = ChronoUnit.MINUTES.between(defaultschedule.getLunchstart(), defaultschedule.getLunchstop());
+        this.shiftDuration = ChronoUnit.MINUTES.between(defaultschedule.getShiftstart(), defaultschedule.getShiftstop());
+    
     }
 
     
@@ -45,36 +42,44 @@ public class Shift {
     }
 
     public int getRoundInterval() {
-        return roundInterval;
+        return defaultschedule.getRoundnterval();
     }
 
     public int getGracePeriod() {
-        return gracePeriod;
+        return defaultschedule.getGraceperiod();
     }
 
     public int getDockPenalty() {
-        return dockPenalty;
+        return defaultschedule.getDockpenalty();
     }
 
     public int getLunchThreshold() {
-        return lunchThreshold;
+        return defaultschedule.getLunchthreshold();
     }
 
     public LocalTime getShiftStart() {
-        return shiftStart;
+        return defaultschedule.getShiftstart();
     }
 
     public LocalTime getShiftStop() {
-        return shiftStop;
+        return defaultschedule.getShiftstop();
     }
 
     public LocalTime getLunchStart() {
-        return lunchStart;
+        return defaultschedule.getLunchstart();
     }
 
     public LocalTime getLunchStop() {
-        return lunchStop;
+        return defaultschedule.getLunchstop();
     }
+    
+    public DailySchedule getDefaultSchedule() {
+        return defaultschedule;
+    }
+    
+    /*public DailySchedule getDailySchedule() {
+        return 
+    }*/
 
     public long getLunchDuration() {
         return lunchDuration;
@@ -88,7 +93,7 @@ public class Shift {
     @Override
     public String toString() {
         return String.format("%s: %s - %s (%d minutes); Lunch: %s - %s (%d minutes)",
-                description, shiftStart, shiftStop, shiftDuration, lunchStart, lunchStop, lunchDuration);
+                description, defaultschedule.getShiftstart(), defaultschedule.getShiftstop(), shiftDuration, defaultschedule.getLunchstart(), defaultschedule.getLunchstop(), lunchDuration);
     }
     
 }

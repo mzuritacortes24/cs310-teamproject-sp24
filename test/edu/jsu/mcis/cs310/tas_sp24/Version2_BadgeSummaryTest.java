@@ -74,4 +74,87 @@ public class Version2_BadgeSummaryTest {
 
     }
     
+    @Test
+    public void testBadgeSummaryByDepartment2() {
+        
+        JsonArray jsonExpected = null, jsonActual = null;
+        
+        try {
+        
+            String jsonExpectedString = "[{\"badgeid\":\"9186E711\",\"name\":\"Adams, Cruz C\",\"department\":\"Cleaning\",\"type\":\"Temporary Employee\"},{\"badgeid\":\"DFE4EB13\",\"name\":\"Black, Jose S\",\"department\":\"Cleaning\",\"type\":\"Full-Time Employee\"},{\"badgeid\":\"2A5620A0\",\"name\":\"Eaton, Curtis M\",\"department\":\"Cleaning\",\"type\":\"Temporary Employee\"},{\"badgeid\":\"B09A75D7\",\"name\":\"Lawrence, Fredrick C\",\"department\":\"Cleaning\",\"type\":\"Temporary Employee\"},{\"badgeid\":\"E215F3DB\",\"name\":\"Wright, Ann T\",\"department\":\"Cleaning\",\"type\":\"Temporary Employee\"}]";
+            jsonExpected = (JsonArray)Jsoner.deserialize(jsonExpectedString);
+            
+            /* Get "Badge Summary" Report (Grinding Dept) */
+
+            String jsonActualString = reportDAO.getBadgeSummary(2);
+            jsonActual = (JsonArray)Jsoner.deserialize(jsonActualString);
+            
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+        
+        /* Compare to Expected Values */
+        
+        assertNotNull(jsonExpected);
+        assertNotNull(jsonActual);
+        assertEquals(jsonExpected, jsonActual);
+
+    }
+    
+    @Test
+    public void testBadgeSummaryByDepartment4() {
+        
+        JsonArray jsonExpected = null, jsonActual = null;
+        
+        try {
+        
+            String jsonExpectedString = "[{\"badgeid\":\"2305D772\",\"name\":\"Antonio, Derrick B\",\"department\":\"Shipping\",\"type\":\"Temporary Employee\"},{\"badgeid\":\"4FA55999\",\"name\":\"Davie, Lori W\",\"department\":\"Shipping\",\"type\":\"Temporary Employee\"},{\"badgeid\":\"EC531DE6\",\"name\":\"Elliott, Nancy L\",\"department\":\"Shipping\",\"type\":\"Temporary Employee\"},{\"badgeid\":\"73591F00\",\"name\":\"Gauna, Christine M\",\"department\":\"Shipping\",\"type\":\"Temporary Employee\"},{\"badgeid\":\"E216D413\",\"name\":\"Jones, Mitchell C\",\"department\":\"Shipping\",\"type\":\"Full-Time Employee\"},{\"badgeid\":\"B4BBABEC\",\"name\":\"Lawless, Brian L\",\"department\":\"Shipping\",\"type\":\"Full-Time Employee\"},{\"badgeid\":\"9BFCB537\",\"name\":\"Lilly, James M\",\"department\":\"Shipping\",\"type\":\"Full-Time Employee\"},{\"badgeid\":\"FF591F68\",\"name\":\"Miller, Robert K\",\"department\":\"Shipping\",\"type\":\"Full-Time Employee\"},{\"badgeid\":\"3437588A\",\"name\":\"Mullen, Margaret M\",\"department\":\"Shipping\",\"type\":\"Temporary Employee\"},{\"badgeid\":\"8C4CE4AC\",\"name\":\"Rhoades, Kathryn R\",\"department\":\"Shipping\",\"type\":\"Full-Time Employee\"},{\"badgeid\":\"9D527CFB\",\"name\":\"Rodriquez, Jarvis B\",\"department\":\"Shipping\",\"type\":\"Temporary Employee\"},{\"badgeid\":\"CEBCC740\",\"name\":\"Ryan, Salvador F\",\"department\":\"Shipping\",\"type\":\"Full-Time Employee\"},{\"badgeid\":\"B7A6171D\",\"name\":\"Taylor, Elisa G\",\"department\":\"Shipping\",\"type\":\"Temporary Employee\"},{\"badgeid\":\"E880B82A\",\"name\":\"Williams, Tyson E\",\"department\":\"Shipping\",\"type\":\"Full-Time Employee\"},{\"badgeid\":\"B6902696\",\"name\":\"Wright, Nadine P\",\"department\":\"Shipping\",\"type\":\"Temporary Employee\"}]";
+            jsonExpected = (JsonArray)Jsoner.deserialize(jsonExpectedString);
+            
+            /* Get "Badge Summary" Report (Grinding Dept) */
+
+            String jsonActualString = reportDAO.getBadgeSummary(8);
+            jsonActual = (JsonArray)Jsoner.deserialize(jsonActualString);
+            
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+        
+        /* Compare to Expected Values */
+        
+        assertNotNull(jsonExpected);
+        assertNotNull(jsonActual);
+        assertEquals(jsonExpected, jsonActual);
+
+    }
+    
+    @Test
+    public void testBadgeSummaryByDepartment5() {
+        
+        JsonArray jsonExpected = null, jsonActual = null;
+        
+        try {
+        
+            String jsonExpectedString = "[{\"badgeid\":\"4382D92D\",\"name\":\"Alvarez, Laurie J\",\"department\":\"Office\",\"type\":\"Full-Time Employee\"},{\"badgeid\":\"CEDB6920\",\"name\":\"Mills, Mildred K\",\"department\":\"Office\",\"type\":\"Full-Time Employee\"},{\"badgeid\":\"ADD650A8\",\"name\":\"Taylor, Jennifer T\",\"department\":\"Office\",\"type\":\"Full-Time Employee\"},{\"badgeid\":\"C4F37EFF\",\"name\":\"Welch, Travis C\",\"department\":\"Office\",\"type\":\"Full-Time Employee\"}]";
+            jsonExpected = (JsonArray)Jsoner.deserialize(jsonExpectedString);
+            
+            /* Get "Badge Summary" Report (Grinding Dept) */
+
+            String jsonActualString = reportDAO.getBadgeSummary(6);
+            jsonActual = (JsonArray)Jsoner.deserialize(jsonActualString);
+            
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+        
+        /* Compare to Expected Values */
+        
+        assertNotNull(jsonExpected);
+        assertNotNull(jsonActual);
+        assertEquals(jsonExpected, jsonActual);
+
+    }
 }
