@@ -56,12 +56,6 @@ public final class DAOUtility {
 
             for(Punch p : dailypunchlist){
                 
-                System.out.println("Lunch subtract="+shift.getLunchThreshold());
-                System.out.println(p.getAdjustmenttype());
-                System.out.println(p.printOriginal());
-                System.out.println(p.printAdjusted());
-                System.out.println(shift);
-                
                 if((p.getAdjustedtimestamp().getDayOfWeek() == DayOfWeek.SUNDAY) || (p.getAdjustedtimestamp().getDayOfWeek() == DayOfWeek.SATURDAY)){   /* check to see if the punch falls on a weekend */
 
                     weekend = true;
@@ -187,22 +181,20 @@ public final class DAOUtility {
             catch(Exception e){}
 
             if(!(weekend)){
-
-                System.out.println("Total="+dailytotalminutes);
                 
                 try{
 
                     if((lunch_out.toLocalTime().equals(shift.getLunchStart())) && (lunch_in.toLocalTime().equals(shift.getLunchStop()))){   /* check for lunch break taken */
-                        System.out.println("Lunch 1");
+
                         dailytotalminutes = (int) (dailytotalminutes - shift.getLunchDuration());                                                           /* subtract lunch break from total time */
 
                     }
 
                 }
                 catch(Exception e){
-
+                    
                     if(dailytotalminutes >= shift.getLunchThreshold()){                                                                                /* check if lunch threshold has been reached */
-                        System.out.println("Lunch 2");
+
                         dailytotalminutes = (int) (dailytotalminutes - shift.getLunchDuration());                                                           /* subtract lunch break from total time */
 
                     }
@@ -217,7 +209,6 @@ public final class DAOUtility {
                 
             }
             
-            System.out.println("Total after lunch="+dailytotalminutes);
             totalminutes += dailytotalminutes;
             currentday++;
                 
@@ -289,8 +280,6 @@ public final class DAOUtility {
         double workedMinutes = calculateTotalMinutes(punchList, shift);
 
         double scheduledMinutes = (double) ((shift.getShiftDuration() - shift.getLunchDuration())*5);
-        
-        System.out.println("Worked "+workedMinutes);
         
         double percentage = ((scheduledMinutes - workedMinutes)/scheduledMinutes)*100;
 

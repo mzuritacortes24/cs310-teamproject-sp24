@@ -189,7 +189,7 @@ public class Punch {
                     }
                     
                     
-                    else if((punchtime == (s.getLunchStart())) || ((punchtime.isBefore(s.getLunchStop())))){                                                                                                                                                           /* check if punch is lunch clock out */
+                    else if((punchtime == (s.getLunchStart())) || (((punchtime.isBefore(s.getLunchStop()))) && (punchtime.isAfter(s.getLunchStart())))){                                                                                                                                                           /* check if punch is lunch clock out */
 
                         adjustedtimestamp = LocalDateTime.of(punchdate, s.getLunchStart());                                                                                                                                                                         /* set values of adjusted time stamp */
                         adjustmenttype = PunchAdjustmentType.LUNCH_START;                                                                                                                                                                                                   /*  */
