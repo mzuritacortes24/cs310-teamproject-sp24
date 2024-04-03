@@ -15,8 +15,7 @@ public class Shift {
     private String description;
     private final int id;
     private final DailySchedule defaultschedule;
-    private final HashMap weeklyschedule = new HashMap();
-    private final long lunchDuration, shiftDuration;
+    private final HashMap<DayOfWeek, DailySchedule> weeklyschedule = new HashMap();
     
     // constructor that accepts a Map as argument
     public Shift(Map<String, String> shiftInfo){
@@ -25,8 +24,11 @@ public class Shift {
         
         this.defaultschedule = new DailySchedule(shiftInfo);
         
-        this.lunchDuration = ChronoUnit.MINUTES.between(defaultschedule.getLunchstart(), defaultschedule.getLunchstop());
-        this.shiftDuration = ChronoUnit.MINUTES.between(defaultschedule.getShiftstart(), defaultschedule.getShiftstop());
+        for(int i = 1; i <= 5; i++){
+            
+            weeklyschedule.put(DayOfWeek.of(i), defaultschedule);
+            
+        }
     
     }
 
@@ -42,7 +44,7 @@ public class Shift {
     }
 
     public int getRoundInterval() {
-        return defaultschedule.getRoundnterval();
+        return defaultschedule.getRoundinterval();
     }
 
     public int getGracePeriod() {
@@ -77,23 +79,29 @@ public class Shift {
         return defaultschedule;
     }
     
-    /*public DailySchedule getDailySchedule() {
-        return 
-    }*/
+    public DailySchedule getDailySchedule(DayOfWeek dayofweek) {  
+        return weeklyschedule.get(dayofweek);
+    }
 
     public long getLunchDuration() {
-        return lunchDuration;
+        return defaultschedule.getLunchduration();
     }
 
     public long getShiftDuration() {
-        return shiftDuration;
+        return defaultschedule.getShiftduration();
+    }
+    
+    public void setDailySchedule(int dayofweek, Map<String, String> shiftInfo){
+        
+        weeklyschedule.put(DayOfWeek.of(dayofweek), new DailySchedule(shiftInfo));
+        
     }
 
     // override toString() method
     @Override
     public String toString() {
         return String.format("%s: %s - %s (%d minutes); Lunch: %s - %s (%d minutes)",
-                description, defaultschedule.getShiftstart(), defaultschedule.getShiftstop(), shiftDuration, defaultschedule.getLunchstart(), defaultschedule.getLunchstop(), lunchDuration);
+                description, defaultschedule.getShiftstart(), defaultschedule.getShiftstop(), defaultschedule.getShiftduration(), defaultschedule.getLunchstart(), defaultschedule.getLunchstop(), defaultschedule.getLunchduration());
     }
     
 }

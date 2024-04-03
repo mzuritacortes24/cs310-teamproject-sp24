@@ -8,10 +8,10 @@ import java.time.temporal.ChronoUnit;
 import java.time.format.DateTimeFormatter;
 import com.github.cliftonlabs.json_simple.*;
 import edu.jsu.mcis.cs310.tas_sp24.Badge;
+import edu.jsu.mcis.cs310.tas_sp24.DailySchedule;
 import edu.jsu.mcis.cs310.tas_sp24.EventType;
 import edu.jsu.mcis.cs310.tas_sp24.Punch;
 import edu.jsu.mcis.cs310.tas_sp24.Shift;
-
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
@@ -39,7 +39,9 @@ public final class DAOUtility {
             for(Punch punch : punchlist){
                 
                 if(punch.getOriginaltimestamp().getDayOfMonth() == currentday){
-                
+                    System.out.println(punch.printOriginal());
+                    System.out.println(punch.printAdjusted());
+                    
                     dailypunchlist.add(punch);
                     
                 }
@@ -53,7 +55,7 @@ public final class DAOUtility {
             LocalDateTime lunch_out = null;                                         /*  */
             LocalDateTime time_out = null;                                          /*  */
             Boolean weekend = false;                                                /*  */
-
+            
             for(Punch p : dailypunchlist){
                 
                 if((p.getAdjustedtimestamp().getDayOfWeek() == DayOfWeek.SUNDAY) || (p.getAdjustedtimestamp().getDayOfWeek() == DayOfWeek.SATURDAY)){   /* check to see if the punch falls on a weekend */
@@ -168,7 +170,7 @@ public final class DAOUtility {
 
             }
             catch(Exception e){}
-
+            
             try{
 
                 if((lunch_out != null) && (lunch_in == null)){
@@ -180,22 +182,29 @@ public final class DAOUtility {
             }
             catch(Exception e){}
 
-            if(!(weekend)){
+            System.out.println(dailytotalminutes);
+            
+            if((!(weekend)) && (!(dailypunchlist.isEmpty()))){
+                
+                DailySchedule schedule = shift.getDailySchedule(dailypunchlist.get(0).getOriginaltimestamp().getDayOfWeek());
+                System.out.println(schedule.getShiftstart());
+                System.out.println(schedule.getShiftstop());
+                System.out.println(schedule.getLunchthreshold());
                 
                 try{
 
-                    if((lunch_out.toLocalTime().equals(shift.getLunchStart())) && (lunch_in.toLocalTime().equals(shift.getLunchStop()))){   /* check for lunch break taken */
+                    if((lunch_out.toLocalTime().equals(schedule.getLunchstart())) && (lunch_in.toLocalTime().equals(schedule.getLunchstop()))){   /* check for lunch break taken */
 
-                        dailytotalminutes = (int) (dailytotalminutes - shift.getLunchDuration());                                                           /* subtract lunch break from total time */
+                        dailytotalminutes = (int) (dailytotalminutes - schedule.getLunchduration());                                                           /* subtract lunch break from total time */
 
                     }
 
                 }
                 catch(Exception e){
                     
-                    if(dailytotalminutes >= shift.getLunchThreshold()){                                                                                /* check if lunch threshold has been reached */
+                    if(dailytotalminutes >= schedule.getLunchthreshold()){                                                                                /* check if lunch threshold has been reached */
 
-                        dailytotalminutes = (int) (dailytotalminutes - shift.getLunchDuration());                                                           /* subtract lunch break from total time */
+                        dailytotalminutes = (int) (dailytotalminutes - schedule.getLunchduration());                                                           /* subtract lunch break from total time */
 
                     }
 
@@ -211,6 +220,8 @@ public final class DAOUtility {
             
             totalminutes += dailytotalminutes;
             currentday++;
+            
+            System.out.println(dailytotalminutes);
                 
         }
         
@@ -279,7 +290,16 @@ public final class DAOUtility {
 
         double workedMinutes = calculateTotalMinutes(punchList, shift);
 
-        double scheduledMinutes = (double) ((shift.getShiftDuration() - shift.getLunchDuration())*5);
+        double scheduledMinutes = 0;
+        
+        for(int i = 1; i <= 5; i++){
+            
+            scheduledMinutes += ((shift.getDailySchedule(DayOfWeek.of(i)).getShiftduration()) - (shift.getDailySchedule(DayOfWeek.of(i)).getLunchduration()));
+            
+        }
+        
+        System.out.println(scheduledMinutes);
+        System.out.println(workedMinutes);
         
         double percentage = ((scheduledMinutes - workedMinutes)/scheduledMinutes)*100;
 

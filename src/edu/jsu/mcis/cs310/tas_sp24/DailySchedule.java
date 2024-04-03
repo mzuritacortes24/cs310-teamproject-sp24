@@ -1,6 +1,7 @@
 package edu.jsu.mcis.cs310.tas_sp24;
 
 import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Map;
 
 /**
@@ -17,6 +18,8 @@ public class DailySchedule {
     private final int graceperiod;
     private final int dockpenalty;
     private final int lunchthreshold;
+    private final long lunchduration;
+    private final long shiftduration;
     
     public DailySchedule(Map<String, String> scheduleInfo) {
         
@@ -28,6 +31,9 @@ public class DailySchedule {
         this.graceperiod = Integer.parseInt(scheduleInfo.get("graceperiod"));
         this.dockpenalty = Integer.parseInt(scheduleInfo.get("dockpenalty"));
         this.lunchthreshold = Integer.parseInt(scheduleInfo.get("lunchthreshold"));
+        
+        this.lunchduration = ChronoUnit.MINUTES.between(lunchstart, lunchstop);
+        this.shiftduration = ChronoUnit.MINUTES.between(shiftstart, shiftstop);
         
     }
 
@@ -47,7 +53,7 @@ public class DailySchedule {
         return lunchstop;
     }
 
-    public int getRoundnterval() {
+    public int getRoundinterval() {
         return roundinterval;
     }
 
@@ -63,4 +69,11 @@ public class DailySchedule {
         return lunchthreshold;
     }
     
+    public long getLunchduration() {
+        return lunchduration;
+    }
+    
+    public long getShiftduration() {
+        return shiftduration;
+    }
 }

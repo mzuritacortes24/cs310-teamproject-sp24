@@ -25,7 +25,7 @@ public class Punch {
         this.badge = badge;                                                     /* " */
         this.punchtype = punchtype;                                             /* " */
         this.originaltimestamp = LocalDateTime.now();                           /* set originaltimestamp equal to current time */
-        this.adjustedtimestamp = LocalDateTime.now().withSecond(0);       /* " */
+        this.adjustedtimestamp = LocalDateTime.now().withSecond(0).withNano(0);       /* " */
         this.adjustmenttype = PunchAdjustmentType.valueOf("NONE");          /* " */
         
     }
@@ -45,7 +45,9 @@ public class Punch {
     public void adjust(Shift s){
         
         LocalTime punchtime = originaltimestamp.toLocalTime();
+        LocalTime punchtimenoseconds = adjustedtimestamp.toLocalTime();
         LocalDate punchdate = originaltimestamp.toLocalDate();
+        DailySchedule schedule = s.getDailySchedule(punchdate.getDayOfWeek());
         boolean midnightroundup = false;
         
         switch(punchtype){
@@ -54,18 +56,18 @@ public class Punch {
                 
                 if(!((punchdate.getDayOfWeek() == DayOfWeek.SUNDAY) || (punchdate.getDayOfWeek() == DayOfWeek.SATURDAY))){                                                                                                                                                  /* check for weekend */
                         
-                    if((punchtime != (s.getLunchStart())) && (punchtime.isAfter(s.getLunchStop()))){                                                                                                                                                               /* check for lunch break */
+                    if((punchtime != (schedule.getLunchstart())) && (punchtime.isAfter(schedule.getLunchstop()))){                                                                                                                                                               /* check for lunch break */
 
-                        if(punchtime.isBefore(s.getShiftStop())){                                                                                                                                                                                                      /* check if punch is prior to the shift end */
+                        if(punchtime.isBefore(schedule.getShiftstop())){                                                                                                                                                                                                      /* check if punch is prior to the shift end */
 
-                            if(((ChronoUnit.MINUTES.between( punchtime, s.getShiftStop())) > s.getGracePeriod()) && ((ChronoUnit.MINUTES.between( punchtime, s.getShiftStop())) <= s.getRoundInterval())){      /* check to see if punch is outside the grace period but within the interval period */                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             //War Room F
+                            if(((ChronoUnit.MINUTES.between( punchtimenoseconds, schedule.getShiftstop())) > schedule.getGraceperiod()) && ((ChronoUnit.MINUTES.between( punchtimenoseconds, schedule.getShiftstop())) <= schedule.getRoundinterval())){      /* check to see if punch is outside the grace period but within the interval period */                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             //War Room F
 
-                                adjustedtimestamp = LocalDateTime.of(punchdate, s.getShiftStop().minusMinutes(s.getDockPenalty()));                                                                                                                   /* place values into variables */
+                                adjustedtimestamp = LocalDateTime.of(punchdate, schedule.getShiftstop().minusMinutes(schedule.getDockpenalty()));                                                                                                                   /* place values into variables */
                                 adjustmenttype = PunchAdjustmentType.SHIFT_DOCK;                                                                                                                                                                                            /*  */
                                 
                             }
                             
-                            else if((((ChronoUnit.MINUTES.between( punchtime, s.getShiftStop())) > s.getRoundInterval()))){                                                                                                                   /* check if punch is outside the interval period */
+                            else if((((ChronoUnit.MINUTES.between( punchtimenoseconds, schedule.getShiftstop())) > schedule.getRoundinterval()))){                                                                                                                   /* check if punch is outside the interval period */
                                                               
                                 try{
                                     
@@ -77,13 +79,13 @@ public class Punch {
 
                                     punchtime = punchtime.withSecond(0).withNano(0);                                                                                                                                                                        /* clear seconds and nanoseconds */
 
-                                    if((ChronoUnit.MINUTES.between(punchtime, LocalTime.MIDNIGHT)) <= s.getRoundInterval() && (ChronoUnit.MINUTES.between(punchtime, LocalTime.MIDNIGHT)) >= 0){                                                                            /* check if day will be changed due to midnight round up */                                                                                 /* check to see if  */
+                                    if((ChronoUnit.MINUTES.between(punchtime, LocalTime.MIDNIGHT)) <= schedule.getRoundinterval() && (ChronoUnit.MINUTES.between(punchtime, LocalTime.MIDNIGHT)) >= 0){                                                                            /* check if day will be changed due to midnight round up */                                                                                 /* check to see if  */
                                         
                                         midnightroundup = true;                                                                                                                                                                                                             /* set flag if round up is needed */
 
                                     }
 
-                                    punchtime = punchtime.withMinute((Math.round((float)(((float)punchtime.getMinute()) / s.getRoundInterval()))*s.getRoundInterval()));                                                                                                    /* round minutes to nearest interval */
+                                    punchtime = punchtime.withMinute((Math.round((float)(((float)punchtime.getMinute()) / schedule.getRoundinterval()))*schedule.getRoundinterval()));                                                                                                    /* round minutes to nearest interval */
 
                                 }
                                 catch(Exception e){
@@ -115,25 +117,25 @@ public class Punch {
 
                             }
 
-                            else if((ChronoUnit.MINUTES.between(punchtime, s.getShiftStop())) <= s.getGracePeriod()){                                                                                                                         /* check if punch is within grace period */
+                            else if((ChronoUnit.MINUTES.between(punchtimenoseconds, schedule.getShiftstop())) <= schedule.getGraceperiod()){                                                                                                                         /* check if punch is within grace period */
 
-                                adjustedtimestamp = LocalDateTime.of(punchdate, s.getShiftStop());                                                                                                                                                                  /* set values of adjusted time stamp */
+                                adjustedtimestamp = LocalDateTime.of(punchdate, schedule.getShiftstop());                                                                                                                                                                  /* set values of adjusted time stamp */
                                 adjustmenttype = PunchAdjustmentType.SHIFT_STOP;                                                                                                                                                                                            /*  */
 
                             }
 
                         }
 
-                        else if((punchtime.isAfter(s.getShiftStop()))){                                                                                                                                                                                                /* check if punch is after shift stop */
+                        else if((punchtime.isAfter(schedule.getShiftstop()))){                                                                                                                                                                                                /* check if punch is after shift stop */
 
-                            if((ChronoUnit.MINUTES.between( s.getShiftStop(), punchtime)) <= s.getRoundInterval()){                                                                                                                           /* check if punch is within the interval period */
+                            if((ChronoUnit.MINUTES.between( schedule.getShiftstop(), punchtimenoseconds)) <= schedule.getRoundinterval()){                                                                                                                           /* check if punch is within the interval period */
 
-                                adjustedtimestamp = LocalDateTime.of(punchdate, s.getShiftStop());                                                                                                                                                                  /* set values of adjusted time stamp */
+                                adjustedtimestamp = LocalDateTime.of(punchdate, schedule.getShiftstop());                                                                                                                                                                  /* set values of adjusted time stamp */
                                 adjustmenttype = PunchAdjustmentType.SHIFT_STOP;                                                                                                                                                                                            /*  */
                                 
                             }
                             
-                            else if(((ChronoUnit.MINUTES.between( s.getShiftStop(), punchtime)) > s.getRoundInterval()) && ((ChronoUnit.MINUTES.between( s.getShiftStop(), punchtime.withSecond(0))%15) != 0)){                                                                                                                      /* check if punch is within the interval period */
+                            else if(((ChronoUnit.MINUTES.between( schedule.getShiftstop(), punchtimenoseconds)) > schedule.getRoundinterval()) && ((ChronoUnit.MINUTES.between( schedule.getShiftstop(), punchtimenoseconds)%15) != 0)){                                                                                                                      /* check if punch is within the interval period */
                                 
                                 try{
                                     
@@ -145,13 +147,13 @@ public class Punch {
 
                                     punchtime = punchtime.withSecond(0).withNano(0);                                                                                                                                                                        /* clear seconds and nanoseconds */
 
-                                    if((ChronoUnit.MINUTES.between(punchtime, LocalTime.MIDNIGHT)) <= s.getRoundInterval() && (ChronoUnit.MINUTES.between(punchtime, LocalTime.MIDNIGHT)) >= 0){                                                                            /* check if day will be changed due to midnight round up */                                                                                 /* check to see if  */
+                                    if((ChronoUnit.MINUTES.between(punchtime, LocalTime.MIDNIGHT)) <= schedule.getRoundinterval() && (ChronoUnit.MINUTES.between(punchtime, LocalTime.MIDNIGHT)) >= 0){                                                                            /* check if day will be changed due to midnight round up */                                                                                 /* check to see if  */
                                         
                                         midnightroundup = true;                                                                                                                                                                                                             /* set flag if round up is needed */
 
                                     }
 
-                                    punchtime = punchtime.withMinute((Math.round((float)(((float)punchtime.getMinute()) / s.getRoundInterval()))*s.getRoundInterval()));                                                                                                    /* round minutes to nearest interval */
+                                    punchtime = punchtime.withMinute((Math.round((float)(((float)punchtime.getMinute()) / schedule.getRoundinterval()))*schedule.getRoundinterval()));                                                                                                    /* round minutes to nearest interval */
 
                                 }
                                 catch(Exception e){
@@ -189,9 +191,9 @@ public class Punch {
                     }
                     
                     
-                    else if((punchtime == (s.getLunchStart())) || (((punchtime.isBefore(s.getLunchStop()))) && (punchtime.isAfter(s.getLunchStart())))){                                                                                                                                                           /* check if punch is lunch clock out */
+                    else if((punchtime == (schedule.getLunchstart())) || (((punchtime.isBefore(schedule.getLunchstop()))) && (punchtime.isAfter(schedule.getLunchstart())))){                                                                                                                                                           /* check if punch is lunch clock out */
 
-                        adjustedtimestamp = LocalDateTime.of(punchdate, s.getLunchStart());                                                                                                                                                                         /* set values of adjusted time stamp */
+                        adjustedtimestamp = LocalDateTime.of(punchdate, schedule.getLunchstart());                                                                                                                                                                         /* set values of adjusted time stamp */
                         adjustmenttype = PunchAdjustmentType.LUNCH_START;                                                                                                                                                                                                   /*  */
 
                     }
@@ -208,13 +210,13 @@ public class Punch {
 
                             punchtime = punchtime.withSecond(0).withNano(0);                                                                                                                                                                                /*  */
 
-                            if((ChronoUnit.MINUTES.between(punchtime, LocalTime.MIDNIGHT)) <= s.getRoundInterval() && (ChronoUnit.MINUTES.between(punchtime, LocalTime.MIDNIGHT)) >= 0){                                                                                    /*  */
+                            if((ChronoUnit.MINUTES.between(punchtime, LocalTime.MIDNIGHT)) <= schedule.getRoundinterval() && (ChronoUnit.MINUTES.between(punchtime, LocalTime.MIDNIGHT)) >= 0){                                                                                    /*  */
                                 
                                midnightroundup = true;                                                                                                                                                                                                                      /*  */                         
 
                             }
 
-                            punchtime = punchtime.withMinute((Math.round((float)(((float)punchtime.getMinute()) / s.getRoundInterval()))*s.getRoundInterval()));                                                                                                            /*  */
+                            punchtime = punchtime.withMinute((Math.round((float)(((float)punchtime.getMinute()) / schedule.getRoundinterval()))*schedule.getRoundinterval()));                                                                                                            /*  */
 
                         }
                         catch(Exception e){
@@ -304,18 +306,18 @@ public class Punch {
                 
                 if(!((punchdate.getDayOfWeek() == DayOfWeek.SUNDAY) || (punchdate.getDayOfWeek() == DayOfWeek.SATURDAY))){                                                                                                                                                  /* check for weekend */
                     
-                    if((punchtime != (s.getLunchStop())) && (punchtime.isBefore(s.getLunchStart()))){                                                                                                                                                                /* check for lunch break */
+                    if((punchtime != (schedule.getLunchstop())) && (punchtime.isBefore(schedule.getLunchstart()))){                                                                                                                                                                /* check for lunch break */
 
-                        if(punchtime.isAfter(s.getShiftStart())){                                                                                                                                                                                                      /* check if punch is after shift start */
+                        if(punchtime.isAfter(schedule.getShiftstart())){                                                                                                                                                                                                      /* check if punch is after shift start */
 
-                            if(((ChronoUnit.MINUTES.between(s.getShiftStart(), punchtime)) > s.getGracePeriod()) && ((ChronoUnit.MINUTES.between(s.getShiftStart(), punchtime)) <= s.getRoundInterval())){      /* check to see if punch is outside the grace period but within the interval period */
+                            if(((ChronoUnit.MINUTES.between(schedule.getShiftstart(), punchtimenoseconds)) > schedule.getGraceperiod()) && ((ChronoUnit.MINUTES.between(schedule.getShiftstart(), punchtimenoseconds)) <= schedule.getRoundinterval())){      /* check to see if punch is outside the grace period but within the interval period */
 
-                                adjustedtimestamp = LocalDateTime.of(punchdate, s.getShiftStart().plusMinutes(s.getDockPenalty()));                                                                                                                       /* place values into variables */
+                                adjustedtimestamp = LocalDateTime.of(punchdate, schedule.getShiftstart().plusMinutes(schedule.getDockpenalty()));                                                                                                                       /* place values into variables */
                                 adjustmenttype = PunchAdjustmentType.SHIFT_DOCK;                                                                                                                                                                                            /*  */
                                 
                             }
                             
-                            else if((((ChronoUnit.MINUTES.between(s.getShiftStart(), punchtime)) > s.getRoundInterval()))){                                                                                                                   /* check if punch is outside interval period */
+                            else if((((ChronoUnit.MINUTES.between(schedule.getShiftstart(), punchtimenoseconds)) > schedule.getRoundinterval()))){                                                                                                                   /* check if punch is outside interval period */
                                 
                                 try{
                         
@@ -327,13 +329,13 @@ public class Punch {
 
                                     punchtime = punchtime.withSecond(0).withNano(0);                                                                                                                                                                        /*  */
 
-                                    if((ChronoUnit.MINUTES.between(punchtime, LocalTime.MIDNIGHT)) <= s.getRoundInterval() && (ChronoUnit.MINUTES.between(punchtime, LocalTime.MIDNIGHT)) >= 0){                                                                            /*  */
+                                    if((ChronoUnit.MINUTES.between(punchtime, LocalTime.MIDNIGHT)) <= schedule.getRoundinterval() && (ChronoUnit.MINUTES.between(punchtime, LocalTime.MIDNIGHT)) >= 0){                                                                            /*  */
                                         
                                         midnightroundup = true;                                                                                                                                                                                                             /*  */
 
                                     }
 
-                                    punchtime = punchtime.withMinute((Math.round((float)(((float)punchtime.getMinute()) / s.getRoundInterval()))*s.getRoundInterval()));                                                                                                    /*  */
+                                    punchtime = punchtime.withMinute((Math.round((float)(((float)punchtime.getMinute()) / schedule.getRoundinterval()))*schedule.getRoundinterval()));                                                                                                    /*  */
 
                                 }
                                 catch(Exception e){
@@ -365,25 +367,25 @@ public class Punch {
                                 
                             }
 
-                            else if((ChronoUnit.MINUTES.between(s.getShiftStart(), punchtime)) <= s.getGracePeriod()){                                                                                                                        /* check to see if punch is within grace period */
+                            else if((ChronoUnit.MINUTES.between(schedule.getShiftstart(), punchtimenoseconds)) <= schedule.getGraceperiod()){                                                                                                                        /* check to see if punch is within grace period */
 
-                                adjustedtimestamp = LocalDateTime.of(punchdate, s.getShiftStart());                                                                                                                                                                 /* set values of adjusted time stamp */
+                                adjustedtimestamp = LocalDateTime.of(punchdate, schedule.getShiftstart());                                                                                                                                                                 /* set values of adjusted time stamp */
                                 adjustmenttype = PunchAdjustmentType.SHIFT_START;                                                                                                                                                                                           /*  */
 
                             }
 
                         }
 
-                        else if((punchtime.isBefore(s.getShiftStart()))){                                                                                                                                                                                              /* check if punch is before shift start */
+                        else if((punchtime.isBefore(schedule.getShiftstart()))){                                                                                                                                                                                              /* check if punch is before shift start */
 
-                            if((ChronoUnit.MINUTES.between(punchtime, s.getShiftStart())) <= s.getRoundInterval()){                                                                                                                           /* check if punch is within the interval period */
-
-                                adjustedtimestamp = LocalDateTime.of(punchdate, s.getShiftStart());                                                                                                                                                                 /* set values of adjusted time stamp */
+                            if((ChronoUnit.MINUTES.between(punchtimenoseconds, schedule.getShiftstart())) <= schedule.getRoundinterval()){                                                                                                                           /* check if punch is within the interval period */
+                                
+                                adjustedtimestamp = LocalDateTime.of(punchdate, schedule.getShiftstart());                                                                                                                                                                 /* set values of adjusted time stamp */
                                 adjustmenttype = PunchAdjustmentType.SHIFT_START;                                                                                                                                                                                           /*  */
                                 
                             }
                             
-                            else if(((ChronoUnit.MINUTES.between(punchtime, s.getShiftStart())) > s.getRoundInterval()) && ((ChronoUnit.MINUTES.between(punchtime.withSecond(0), s.getShiftStart())%15) != 0)){                                                                                                                      /* check if punch is within the interval period */
+                            else if(((ChronoUnit.MINUTES.between(punchtimenoseconds, schedule.getShiftstart())) > schedule.getRoundinterval()) && ((ChronoUnit.MINUTES.between(punchtimenoseconds, schedule.getShiftstart())%15) != 0)){                                                                                                                      /* check if punch is within the interval period */
                                 
                                 try{
                         
@@ -395,13 +397,13 @@ public class Punch {
 
                                     punchtime = punchtime.withSecond(0).withNano(0);                                                                                                                                                                        /*  */
 
-                                    if((ChronoUnit.MINUTES.between(punchtime, LocalTime.MIDNIGHT)) <= s.getRoundInterval() && (ChronoUnit.MINUTES.between(punchtime, LocalTime.MIDNIGHT)) >= 0){                                                                            /*  */
+                                    if((ChronoUnit.MINUTES.between(punchtime, LocalTime.MIDNIGHT)) <= schedule.getRoundinterval() && (ChronoUnit.MINUTES.between(punchtime, LocalTime.MIDNIGHT)) >= 0){                                                                            /*  */
                                         
                                         midnightroundup = true;                                                                                                                                                                                                             /*  */
 
                                     }
 
-                                    punchtime = punchtime.withMinute((Math.round((float)(((float)punchtime.getMinute()) / s.getRoundInterval()))*s.getRoundInterval()));                                                                                                    /*  */
+                                    punchtime = punchtime.withMinute((Math.round((float)(((float)punchtime.getMinute()) / schedule.getRoundinterval()))*schedule.getRoundinterval()));                                                                                                    /*  */
 
                                 }
                                 catch(Exception e){
@@ -437,9 +439,9 @@ public class Punch {
 
                     }
 
-                    else if((punchtime == (s.getLunchStop())) || ((punchtime.isAfter(s.getLunchStart())))){                                                                                                                                                            /* check if punch is lunch clock in */
+                    else if((punchtime == (schedule.getLunchstop())) || ((punchtime.isAfter(schedule.getLunchstart())))){                                                                                                                                                            /* check if punch is lunch clock in */
 
-                        adjustedtimestamp = LocalDateTime.of(punchdate, s.getLunchStop());                                                                                                                                                                          /* set values of adjusted time stamp */
+                        adjustedtimestamp = LocalDateTime.of(punchdate, schedule.getLunchstop());                                                                                                                                                                          /* set values of adjusted time stamp */
                         adjustmenttype = PunchAdjustmentType.LUNCH_STOP;                                                                                                                                                                                                    /*  */
 
                     }
@@ -457,13 +459,13 @@ public class Punch {
 
                             punchtime = punchtime.withSecond(0).withNano(0);                                                                                                                                                                                /*  */
 
-                            if((ChronoUnit.MINUTES.between(punchtime, LocalTime.MIDNIGHT)) <= s.getRoundInterval() && (ChronoUnit.MINUTES.between(punchtime, LocalTime.MIDNIGHT)) >= 0){                                                                                    /*  */      
+                            if((ChronoUnit.MINUTES.between(punchtime, LocalTime.MIDNIGHT)) <= schedule.getRoundinterval() && (ChronoUnit.MINUTES.between(punchtime, LocalTime.MIDNIGHT)) >= 0){                                                                                    /*  */      
                              
                                 midnightroundup = true;                                                                                                                                                                                                                     /*  */
 
                             }
 
-                            punchtime = punchtime.withMinute((Math.round((float)(((float)punchtime.getMinute()) / s.getRoundInterval()))*s.getRoundInterval()));                                                                                                            /*  */
+                            punchtime = punchtime.withMinute((Math.round((float)(((float)punchtime.getMinute()) / schedule.getRoundinterval()))*schedule.getRoundinterval()));                                                                                                            /*  */
 
                         }
                         catch(Exception e){
