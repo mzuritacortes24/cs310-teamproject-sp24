@@ -1,71 +1,88 @@
 package edu.jsu.mcis.cs310.tas_sp24.dao;
-
 import com.github.cliftonlabs.json_simple.JsonArray;
 import com.github.cliftonlabs.json_simple.JsonObject;
-import java.io.IOException;
+import com.github.cliftonlabs.json_simple.Jsoner;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
+
 
 public class ReportDAO {
 
-    private final Connection conn;
+    private static final String QUERY_FIND1 = 
+        "SELECT b.id AS badgeid, " +
+        "CONCAT(e.lastname, ', ', e.firstname, IFNULL(CONCAT(' ', e.middlename), '')) AS fullname, " +
+        "d.description AS department, " +
+        "et.description AS employeetype " +
+        "FROM employee e " +
+        "INNER JOIN badge b ON e.badgeid = b.id " +
+        "INNER JOIN department d ON e.departmentid = d.id " +
+        "INNER JOIN employeetype et ON e.employeetypeid = et.id ";
 
-    public ReportDAO(Connection conn) {
-        this.conn = conn;
+    private final DAOFactory daoFactory;
+
+    public ReportDAO(DAOFactory daoFactory) {
+        this.daoFactory = daoFactory;
     }
 
-    public JsonArray getBadgeSummary(Integer departmentId) throws SQLException, IOException {
-        String query = "SELECT b.badgeid, CONCAT(e.lastname, ', ', e.firstname, ' ', e.middlename) AS name, d.name AS department, "
-                + "CASE WHEN b.type = 'T' THEN 'Temporary Employee' ELSE 'Full-Time Employee' END AS type "
-                + "FROM badge b "
-                + "JOIN employee e ON b.employeeid = e.employeeid "
-                + "JOIN department d ON b.departmentid = d.departmentid ";
-
-        List<JsonObject> jsonObjects = new ArrayList<>();
-
-        if (departmentId != null) {
-            query += "WHERE b.departmentid = ? ";
-
-            try (PreparedStatement statement = conn.prepareStatement(query)) {
-                statement.setInt(1, departmentId);
-
-                ResultSet resultSet = statement.executeQuery();
-
-                while (resultSet.next()) {
-                    JsonObject jsonObject = new JsonObject();
-                    jsonObject.put("badgeid", resultSet.getString("badgeid"));
-                    jsonObject.put("name", resultSet.getString("name"));
-                    jsonObject.put("department", resultSet.getString("department"));
-                    jsonObject.put("type", resultSet.getString("type"));
-
-                    jsonObjects.add(jsonObject);
+    public String getBadgeSummary(Integer departmentId) {
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        JsonArray badgeSummary = new JsonArray();
+    
+        try {
+            Connection conn = daoFactory.getConnection();
+    
+            if (conn.isValid(0)) {
+                // Start building the SQL query for null clause
+                StringBuilder QUERY = new StringBuilder(QUERY_FIND1);
+    
+                // Conditionally add WHERE clause if departmentId is not null
+                if (departmentId != null) {
+                    QUERY.append("WHERE e.departmentid = ? ");
+                }
+    
+                QUERY.append("ORDER BY e.lastname, e.firstname, e.middlename");
+    
+                ps = conn.prepareStatement(QUERY.toString());
+    
+                // Set the departmentId parameter if not null
+                if (departmentId != null) {
+                    ps.setInt(1, departmentId);
+                }
+    
+                rs = ps.executeQuery();
+    
+                while (rs.next()) {
+                    JsonObject record = new JsonObject();
+                    record.put("badgeid", rs.getString("badgeid"));
+                    record.put("name", rs.getString("fullname"));
+                    record.put("department", rs.getString("department"));
+                    record.put("type", rs.getString("employeetype"));
+                    badgeSummary.add(record);
                 }
             }
-        } else {
-            query += "ORDER BY name";
-
-            try (Statement statement = conn.createStatement()) {
-                ResultSet resultSet = statement.executeQuery(query);
-
-                while (resultSet.next()) {
-                    JsonObject jsonObject = new JsonObject();
-                    jsonObject.put("badgeid", resultSet.getString("badgeid"));
-                    jsonObject.put("name", resultSet.getString("name"));
-                    jsonObject.put("department", resultSet.getString("department"));
-                    jsonObject.put("type", resultSet.getString("type"));
-
-                    jsonObjects.add(jsonObject);
+        } catch (SQLException e) {
+            throw new DAOException(e.getMessage());
+        } finally {
+            if (rs != null) {
+                try {
+                    rs.close();
+                } catch (SQLException e) {
+                    throw new DAOException(e.getMessage());
+                }
+            }   
+            if (ps != null) {
+                try {
+                    ps.close();
+                } catch (SQLException e) {
+                    throw new DAOException(e.getMessage());
                 }
             }
         }
-
-        JsonArray jsonArray = new JsonArray();
-        jsonArray.addAll(jsonObjects);
-
-        return jsonArray;
+        
+        return Jsoner.serialize(badgeSummary);
     }
 }
+
