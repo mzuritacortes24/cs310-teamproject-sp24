@@ -291,7 +291,7 @@ public class Version2_ShiftScheduleTest {
         percentage = DAOUtility.calculateAbsenteeism(p2, s);
         Absenteeism a2 = new Absenteeism(e, ts, percentage);
         
-        assertEquals("#3282F212 (Pay Period Starting 09-16-2018): -42.31%", a2.toString());
+        assertEquals("#3282F212 (Pay Period Starting 09-16-2018): -43.59%", a2.toString());
         
         /* PART THREE */
         
@@ -316,7 +316,7 @@ public class Version2_ShiftScheduleTest {
         percentage = DAOUtility.calculateAbsenteeism(p3, s);
         Absenteeism a3 = new Absenteeism(e, ts, percentage);
         
-        assertEquals("#3282F212 (Pay Period Starting 09-23-2018): -39.74%", a3.toString());
+        assertEquals("#3282F212 (Pay Period Starting 09-23-2018): -41.03%", a3.toString());
         
     }
     

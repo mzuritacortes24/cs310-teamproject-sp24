@@ -71,7 +71,7 @@ public class Punch {
                                                               
                                 try{
                                     
-                                    if(punchtime.getSecond() > (Duration.ofMinutes(1).getSeconds() / 2)){                                                                                                                                                             /* check if seconds are greater than 30 */
+                                    if(punchtime.getSecond() >= (Duration.ofMinutes(1).getSeconds() / 2)){                                                                                                                                                             /* check if seconds are greater than 30 */
 
                                         punchtime = punchtime.plusMinutes(1);                                                                                                                                                                                     /* add minute if seconds are greater */
 
@@ -139,7 +139,7 @@ public class Punch {
                                 
                                 try{
                                     
-                                    if(punchtime.getSecond() > (Duration.ofMinutes(1).getSeconds() / 2)){                                                                                                                                                             /* check if seconds are greater than 30 */
+                                    if(punchtime.getSecond() >= (Duration.ofMinutes(1).getSeconds() / 2)){                                                                                                                                                             /* check if seconds are greater than 30 */
 
                                         punchtime = punchtime.plusMinutes(1);                                                                                                                                                                                     /* add minute if seconds are greater */
 
@@ -202,7 +202,7 @@ public class Punch {
                                             
                         try{
 
-                            if(punchtime.getSecond() > (Duration.ofMinutes(1).getSeconds() / 2)){                                                                                                                                                                     /*  */
+                            if(punchtime.getSecond() >= (Duration.ofMinutes(1).getSeconds() / 2)){                                                                                                                                                                     /*  */
 
                                 punchtime = punchtime.plusMinutes(1);                                                                                                                                                                                             /*  */
 
@@ -254,7 +254,7 @@ public class Punch {
 
                     try{
                         
-                        if(punchtime.getSecond() > (Duration.ofMinutes(1).getSeconds() / 2)){                                                                                                                                                                         /*  */
+                        if(punchtime.getSecond() >= (Duration.ofMinutes(1).getSeconds() / 2)){                                                                                                                                                                         /*  */
                             
                             punchtime = punchtime.plusMinutes(1);                                                                                                                                                                                                 /*  */
                             
@@ -321,7 +321,7 @@ public class Punch {
                                 
                                 try{
                         
-                                    if(punchtime.getSecond() > (Duration.ofMinutes(1).getSeconds() / 2)){                                                                                                                                                             /*  */
+                                    if(punchtime.getSecond() >= (Duration.ofMinutes(1).getSeconds() / 2)){                                                                                                                                                             /*  */
 
                                         punchtime = punchtime.plusMinutes(1);                                                                                                                                                                                     /*  */
 
@@ -389,7 +389,7 @@ public class Punch {
                                 
                                 try{
                         
-                                    if(punchtime.getSecond() > (Duration.ofMinutes(1).getSeconds() / 2)){                                                                                                                                                             /*  */
+                                    if(punchtime.getSecond() >= (Duration.ofMinutes(1).getSeconds() / 2)){                                                                                                                                                             /*  */
 
                                         punchtime = punchtime.plusMinutes(1);                                                                                                                                                                                     /*  */
 
@@ -451,7 +451,7 @@ public class Punch {
 
                         try{
                         
-                            if(punchtime.getSecond() > (Duration.ofMinutes(1).getSeconds() / 2)){                                                                                                                                                                     /*  */
+                            if(punchtime.getSecond() >= (Duration.ofMinutes(1).getSeconds() / 2)){                                                                                                                                                                     /*  */
 
                                 punchtime = punchtime.plusMinutes(1);                                                                                                                                                                                             /*  */
 
@@ -503,7 +503,7 @@ public class Punch {
                     
                     try{
                         
-                        if(punchtime.getSecond() > (Duration.ofMinutes(1).getSeconds() / 2)){                                                                                                                                                                         /*  */
+                        if(punchtime.getSecond() >= (Duration.ofMinutes(1).getSeconds() / 2)){                                                                                                                                                                         /*  */
                             
                             punchtime = punchtime.plusMinutes(1);                                                                                                                                                                                                 /*  */
                             
