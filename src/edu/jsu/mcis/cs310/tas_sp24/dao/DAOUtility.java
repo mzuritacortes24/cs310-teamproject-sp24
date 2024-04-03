@@ -259,7 +259,7 @@ public final class DAOUtility {
         DecimalFormat df = new DecimalFormat("#.00");
         
         long totalMinutes = calculateTotalMinutes(punchlist, shift);
-        String absenteeism = df.format(calculateAbsenteeism(punchlist, shift)) + "%";   //NOTE: calculateAbsenteeism is a placeholder variable
+        String absenteeism = df.format(calculateAbsenteeism(punchlist, shift)) + "%";   //NOTE: calculateAbsenteeism is a placeholder for now
         
         Badge badge = null; 
         
