@@ -39,8 +39,6 @@ public final class DAOUtility {
             for(Punch punch : punchlist){
                 
                 if(punch.getOriginaltimestamp().getDayOfMonth() == currentday){
-                    System.out.println(punch.printOriginal());
-                    System.out.println(punch.printAdjusted());
                     
                     dailypunchlist.add(punch);
                     
@@ -181,15 +179,10 @@ public final class DAOUtility {
 
             }
             catch(Exception e){}
-
-            System.out.println(dailytotalminutes);
             
             if((!(weekend)) && (!(dailypunchlist.isEmpty()))){
                 
                 DailySchedule schedule = shift.getDailySchedule(dailypunchlist.get(0).getOriginaltimestamp().getDayOfWeek());
-                System.out.println(schedule.getShiftstart());
-                System.out.println(schedule.getShiftstop());
-                System.out.println(schedule.getLunchthreshold());
                 
                 try{
 
@@ -220,8 +213,6 @@ public final class DAOUtility {
             
             totalminutes += dailytotalminutes;
             currentday++;
-            
-            System.out.println(dailytotalminutes);
                 
         }
         
@@ -297,9 +288,6 @@ public final class DAOUtility {
             scheduledMinutes += ((shift.getDailySchedule(DayOfWeek.of(i)).getShiftduration()) - (shift.getDailySchedule(DayOfWeek.of(i)).getLunchduration()));
             
         }
-        
-        System.out.println(scheduledMinutes);
-        System.out.println(workedMinutes);
         
         double percentage = ((scheduledMinutes - workedMinutes)/scheduledMinutes)*100;
 
