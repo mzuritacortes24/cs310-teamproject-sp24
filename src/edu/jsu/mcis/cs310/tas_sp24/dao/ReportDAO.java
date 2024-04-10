@@ -2,10 +2,12 @@ package edu.jsu.mcis.cs310.tas_sp24.dao;
 import com.github.cliftonlabs.json_simple.JsonArray;
 import com.github.cliftonlabs.json_simple.JsonObject;
 import com.github.cliftonlabs.json_simple.Jsoner;
+import edu.jsu.mcis.cs310.tas_sp24.EmployeeType;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 
@@ -144,6 +146,12 @@ public class ReportDAO {
             }
         }
         return Jsoner.serialize(reportData);
+        
+    }
+    
+    public JsonArray getHoursSummary(LocalDate date, int departmentid, EmployeeType type){
+        
+        return new JsonArray();
         
     }
 }
