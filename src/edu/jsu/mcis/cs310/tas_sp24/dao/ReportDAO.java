@@ -9,6 +9,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 
 public class ReportDAO {
@@ -22,7 +23,41 @@ public class ReportDAO {
         "INNER JOIN badge b ON e.badgeid = b.id " +
         "INNER JOIN department d ON e.departmentid = d.id " +
         "INNER JOIN employeetype et ON e.employeetypeid = et.id ";
-    private static final String QUERY_FIND2 = "";
+    private static final String QUERY_FIND2 = "SELECT \n" +
+                                            "    *\n" +
+                                            "FROM\n" +
+                                            "    (SELECT \n" +
+                                            "        CASE\n" +
+                                            "	WHEN (TIME(evt.timestamp) < ?)\n" +
+                                            "	     THEN CONCAT_WS(' ', UPPER(DATE_FORMAT(evt.timestamp, '%a')), \n" +
+                                            "	     DATE_FORMAT(evt.timestamp, '%m/%d/%Y'), \n" +
+                                            "	     DATE_FORMAT(evt.timestamp, '%H:%i:%s'))\n" +
+                                            "	     ELSE NULL\n" +
+                                            "         END AS arrived,\n" +
+                                            "         et.description AS employeetype,\n" +
+                                            "         e.firstname AS firstname,\n" +
+                                            "         e.badgeid AS badgeid,\n" +
+                                            "         s.description AS shift,\n" +
+                                            "         e.lastname AS lastname,\n" +
+                                            "         CASE\n" +
+                                            "             WHEN evt.eventtypeid = 1 THEN 'In'\n" +
+                                            "             ELSE 'Out'\n" +
+                                            "         END AS status\n" +
+                                            "    FROM\n" +
+                                            "        employee e\n" +
+                                            "    INNER JOIN department d ON e.departmentid = d.id\n" +
+                                            "    INNER JOIN event evt ON e.badgeid = evt.badgeid\n" +
+                                            "    INNER JOIN employeetype et ON e.employeetypeid = et.id\n" +
+                                            "    INNER JOIN shift s ON e.shiftid = s.id\n" +
+                                            "    INNER JOIN eventtype ett ON evt.eventtypeid = ett.id\n" +
+                                            "    WHERE\n" +
+                                            "        DATE(evt.timestamp) = ? \n" +
+                                            "        AND d.id = ?) \n" +
+                                            "        AS derived\n" +
+                                            "WHERE\n" +
+                                            "    (arrived IS NOT NULL)\n" +
+                                            "     OR (status = 'Out' AND arrived IS NULL)\n" +
+                                            "ORDER BY status = 'In' DESC , employeetype , lastname , firstname;";                                        
 
     private final DAOFactory daoFactory;
 
@@ -98,24 +133,26 @@ public class ReportDAO {
         try {
             
             Connection conn = daoFactory.getConnection();
-            ps = conn.prepareStatement(QUERY_FIND2);
+  
             
             if (conn.isValid(0))   {
-                ps.setTimestamp(1, java.sql.Timestamp.valueOf(dateTime));
-                if (departmentId != null) {
-                    ps.setInt(2, departmentId);
-                } else {
-                    ps.setNull(2, java.sql.Types.INTEGER);
+           
+                ps = conn.prepareStatement(QUERY_FIND2);
+                LocalDate date = dateTime.toLocalDate();
+                LocalTime time = dateTime.toLocalTime();
+                ps.setTime(1, java.sql.Time.valueOf(time));
+                ps.setDate(2, java.sql.Date.valueOf(date));
+                if (departmentId != null)   {
+                   ps.setInt(3, departmentId); 
                 }
-
-              
-                ps.setTimestamp(2, java.sql.Timestamp.valueOf(dateTime));
 
                 rs = ps.executeQuery();
                 
                 while (rs.next()) {
                     JsonObject record = new JsonObject();
-                    record.put("arrived", rs.getString(""));
+                    if (rs.getString("arrived") != null)   {
+                        record.put("arrived", rs.getString("arrived"));
+                    }
                     record.put("employeetype", rs.getString("employeeType"));
                     record.put("firstname", rs.getString("firstname")); 
                     record.put("badgeid", rs.getString("badgeId"));
@@ -145,6 +182,7 @@ public class ReportDAO {
                 }
             }
         }
+        System.out.print(Jsoner.prettyPrint(Jsoner.serialize(reportData)));
         return Jsoner.serialize(reportData);
         
     }
