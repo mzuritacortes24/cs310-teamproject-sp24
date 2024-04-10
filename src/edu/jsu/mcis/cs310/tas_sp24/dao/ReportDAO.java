@@ -57,7 +57,21 @@ public class ReportDAO {
                                             "WHERE\n" +
                                             "    (arrived IS NOT NULL)\n" +
                                             "     OR (status = 'Out' AND arrived IS NULL)\n" +
-                                            "ORDER BY status = 'In' DESC , employeetype , lastname , firstname;";                                        
+                                            "ORDER BY status = 'In' DESC , employeetype , lastname , firstname;"; 
+    private static final String QUERY_FIND4 =
+        "SELECT e.firstname AS firstname, " +
+        "et.description AS employeetype, " +
+        "e.badgeid AS badgeid, " +
+        "s.description AS shift, " +
+        "e.middlename AS middlename, " +
+        "DATE_FORMAT(e.active, '%m/%d/%Y') AS active, " +
+        "d.description AS department, " +
+        "e.lastname AS lastname " +
+        "FROM employee e " +
+        "INNER JOIN department d ON e.departmentid = d.id " +
+        "INNER JOIN employeetype et ON e.employeetypeid = et.id " +
+        "INNER JOIN shift s ON e.shiftid = s.id ";
+                                                
 
     private final DAOFactory daoFactory;
 
@@ -191,6 +205,67 @@ public class ReportDAO {
         
         return new JsonArray();
         
+    }
+    
+    public String getEmployeeSummary(Integer departmentId)   {
+        
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        JsonArray reportData = new JsonArray(); 
+        
+        try {
+            Connection conn = daoFactory.getConnection();
+    
+            if (conn.isValid(0)) {
+           
+                StringBuilder QUERY = new StringBuilder(QUERY_FIND4);
+                    
+                if (departmentId != null) {
+                    QUERY.append("WHERE d.id = ? ");
+                }
+    
+                QUERY.append("ORDER BY d.id DESC,e.firstname,e.lastname, e.middlename");
+    
+                ps = conn.prepareStatement(QUERY.toString());
+    
+                if (departmentId != null) {
+                    ps.setInt(1, departmentId);
+                }
+    
+                rs = ps.executeQuery();
+    
+                while (rs.next()) {
+                    JsonObject record = new JsonObject();
+                    record.put("firstname", rs.getString("firstname"));
+                    record.put("employeetype", rs.getString("employeetype"));
+                    record.put("badgeid",rs.getString("badgeid") );
+                    record.put("shift", rs.getString("shift"));
+                    record.put("middlename", rs.getString("middlename"));
+                    record.put("active",rs.getString("active") );
+                    record.put("department",rs.getString("department") );
+                    record.put("lastname", rs.getString("lastname"));
+                    reportData.add(record);
+                }
+            }
+        } catch (SQLException e) {
+            throw new DAOException(e.getMessage());
+        } finally {
+            if (rs != null) {
+                try {
+                    rs.close();
+                } catch (SQLException e) {
+                    throw new DAOException(e.getMessage());
+                }
+            }   
+            if (ps != null) {
+                try {
+                    ps.close();
+                } catch (SQLException e) {
+                    throw new DAOException(e.getMessage());
+                }
+            }
+        }     
+        return Jsoner.serialize(reportData);
     }
 }
 
