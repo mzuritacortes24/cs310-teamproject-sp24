@@ -341,7 +341,6 @@ public class ReportDAO {
                         summary.put("department", rs.getString("departmentdescription"));
                         summary.put("regular", regular.toString());
 
-
                         summary.put("lastname", rs.getString("lastname"));
 
                         hourSummary.add(summary);
