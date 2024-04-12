@@ -3,13 +3,21 @@ import com.github.cliftonlabs.json_simple.JsonArray;
 import com.github.cliftonlabs.json_simple.JsonObject;
 import com.github.cliftonlabs.json_simple.Jsoner;
 import edu.jsu.mcis.cs310.tas_sp24.EmployeeType;
+import edu.jsu.mcis.cs310.tas_sp24.Punch;
+import edu.jsu.mcis.cs310.tas_sp24.Shift;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.temporal.TemporalAdjusters;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class ReportDAO {
@@ -58,6 +66,35 @@ public class ReportDAO {
                                             "    (arrived IS NOT NULL)\n" +
                                             "     OR (status = 'Out' AND arrived IS NULL)\n" +
                                             "ORDER BY status = 'In' DESC , employeetype , lastname , firstname;"; 
+    
+    private static final String QUERY_GET_PUNCHES_FOR_EMPLOYEETYPE_AND_DEPARTMENT = "SELECT * FROM event INNER JOIN employee ON event.badgeid = employee.badgeid \n" +
+                                                                                    "                    INNER JOIN (SELECT shift.description AS shiftdescription, shift.id AS sid FROM shift) AS s ON employee.shiftid = s.sid \n" +
+                                                                                    "                    INNER JOIN (SELECT department.description AS departmentdescription, department.id AS did FROM department) AS d ON employee.departmentid = d.did\n" +
+                                                                                    "                    INNER JOIN (SELECT employeetype.description AS employeetypedescription, employeetype.id AS eid FROM employeetype) AS e ON employee.employeetypeid = e.eid\n" +
+                                                                                    "WHERE ((employee.departmentid = ?) AND (timestamp >= ? AND timestamp <= ?) AND (employee.employeetypeid = ?))" +
+                                                                                    "ORDER BY lastname, firstname, middlename";
+    
+    private static final String QUERY_GET_PUNCHES_FOR_DEPARTMENT = "SELECT * FROM event INNER JOIN employee ON event.badgeid = employee.badgeid \n" +
+                                                                   "                    INNER JOIN (SELECT shift.description AS shiftdescription, shift.id AS sid FROM shift) AS s ON employee.shiftid = s.sid \n" +
+                                                                   "                    INNER JOIN (SELECT department.description AS departmentdescription, department.id AS did FROM department) AS d ON employee.departmentid = d.did\n" +
+                                                                   "                    INNER JOIN (SELECT employeetype.description AS employeetypedescription, employeetype.id AS eid FROM employeetype) AS e ON employee.employeetypeid = e.eid\n" +
+                                                                   "WHERE ((employee.departmentid = ?) AND (timestamp >= ? AND timestamp <= ?))" +
+                                                                   "ORDER BY lastname, firstname, middlename";
+    
+    private static final String QUERY_GET_PUNCHES_FOR_EMPLOYEETYPE = "SELECT * FROM event INNER JOIN employee ON event.badgeid = employee.badgeid \n" +
+                                                                     "                    INNER JOIN (SELECT shift.description AS shiftdescription, shift.id AS sid FROM shift) AS s ON employee.shiftid = s.sid \n" +
+                                                                     "                    INNER JOIN (SELECT department.description AS departmentdescription, department.id AS did FROM department) AS d ON employee.departmentid = d.did\n" +
+                                                                     "                    INNER JOIN (SELECT employeetype.description AS employeetypedescription, employeetype.id AS eid FROM employeetype) AS e ON employee.employeetypeid = e.eid\n" +
+                                                                     "WHERE ((timestamp >= ? AND timestamp <= ?) AND (employee.employeetypeid = ?))" +
+                                                                     "ORDER BY lastname, firstname, middlename";
+    
+    private static final String QUERY_GET_PUNCHES_FOR_EVERYONE = "SELECT * FROM event INNER JOIN employee ON event.badgeid = employee.badgeid \n" +
+                                                                 "                    INNER JOIN (SELECT shift.description AS shiftdescription, shift.id AS sid FROM shift) AS s ON employee.shiftid = s.sid \n" +
+                                                                 "                    INNER JOIN (SELECT department.description AS departmentdescription, department.id AS did FROM department) AS d ON employee.departmentid = d.did\n" +
+                                                                 "                    INNER JOIN (SELECT employeetype.description AS employeetypedescription, employeetype.id AS eid FROM employeetype) AS e ON employee.employeetypeid = e.eid\n" +
+                                                                 "WHERE (timestamp >= ? AND timestamp <= ?)" + 
+                                                                 "ORDER BY lastname, firstname, middlename";
+    
     private static final String QUERY_FIND4 =
         "SELECT e.firstname AS firstname, " +
         "et.description AS employeetype, " +
@@ -201,9 +238,139 @@ public class ReportDAO {
         
     }
     
-    public JsonArray getHoursSummary(LocalDate date, int departmentid, EmployeeType type){
+    public String getHoursSummary(LocalDate date, Integer departmentid, EmployeeType type){
         
-        return new JsonArray();
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        JsonArray hourSummary = new JsonArray();
+        List<String> badgenum = new ArrayList();
+        
+        LocalDate begin = date.with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY));
+        LocalDate end = begin.with(TemporalAdjusters.next(DayOfWeek.SATURDAY));
+
+        try {
+            
+            Connection conn = daoFactory.getConnection();
+            PunchDAO punchDAO = daoFactory.getPunchDAO();
+            BadgeDAO badgeDAO = daoFactory.getBadgeDAO();
+            ShiftDAO shiftDAO = daoFactory.getShiftDAO();
+            
+            if (conn.isValid(0)){
+                
+                if(departmentid != null && type != null){
+                    
+                    ps = conn.prepareStatement(QUERY_GET_PUNCHES_FOR_EMPLOYEETYPE_AND_DEPARTMENT);
+                    ps.setInt(1, departmentid);
+                    ps.setDate(2, java.sql.Date.valueOf(begin));
+                    ps.setDate(3, java.sql.Date.valueOf(end));
+                    ps.setInt(4, type.ordinal());
+                        
+                }
+                
+                else if(departmentid != null){
+                    
+                    ps = conn.prepareStatement(QUERY_GET_PUNCHES_FOR_DEPARTMENT);
+                    ps.setInt(1, departmentid);
+                    ps.setDate(2, java.sql.Date.valueOf(begin));
+                    ps.setDate(3, java.sql.Date.valueOf(end));
+                    
+                }
+                
+                else if (type != null){
+                    
+                    ps = conn.prepareStatement(QUERY_GET_PUNCHES_FOR_EMPLOYEETYPE);
+                    ps.setDate(1, java.sql.Date.valueOf(begin));
+                    ps.setDate(2, java.sql.Date.valueOf(end));
+                    ps.setInt(3, type.ordinal());
+                    
+                }
+                
+                else{
+                    
+                    ps = conn.prepareStatement(QUERY_GET_PUNCHES_FOR_EVERYONE);
+                    ps.setDate(1, java.sql.Date.valueOf(begin));
+                    ps.setDate(2, java.sql.Date.valueOf(end));
+                    
+                }
+                
+                rs = ps.executeQuery();
+                        
+                while(rs.next()){
+                            
+                    if(!(badgenum.contains(rs.getString("badgeid")))){
+                            
+                        JsonObject summary = new JsonObject();
+
+                        summary.put("employeetype", rs.getString("employeetypedescription"));
+                        summary.put("shift", rs.getString("shiftdescription"));
+                        summary.put("name", (rs.getString("lastname")+", "+rs.getString("firstname")+" "+rs.getString("middlename")));
+                        summary.put("middlename", rs.getString("middlename"));
+
+                        ArrayList<Punch> pl = punchDAO.list(badgeDAO.find(rs.getString("badgeid")), begin, end);
+                        Shift s = shiftDAO.find(badgeDAO.find(rs.getString("badgeid")), date);
+
+                        for (Punch p : pl) {
+
+                            p.adjust(s);
+
+                        }
+
+                        BigDecimal totalminutes = BigDecimal.valueOf(DAOUtility.calculateTotalMinutes(pl, s));
+                        BigDecimal overtime = BigDecimal.valueOf(0);
+                        System.out.println(totalminutes);
+                        BigDecimal regular = totalminutes.divide(BigDecimal.valueOf(60), 2, RoundingMode.HALF_UP);
+                        
+                        BigDecimal regularhours = BigDecimal.valueOf((s.getShiftDuration()/60)*5);
+                        
+                        System.out.println(regular);
+                        
+                        if(regular.compareTo(regularhours) == 1){
+                            
+                            overtime = regular.subtract(regularhours);
+                            regular = regularhours;
+                            
+                        }
+                        
+                        regular = regular.setScale(2);
+                        overtime = overtime.setScale(2);
+
+                        summary.put("overtime", overtime.toString());
+                        summary.put("department", rs.getString("departmentdescription"));
+                        summary.put("regular", regular.toString());
+
+
+                        summary.put("lastname", rs.getString("lastname"));
+
+                        hourSummary.add(summary);
+                                
+                        badgenum.add(rs.getString("badgeid"));
+                                
+                    }
+                            
+                }
+
+            }
+  
+        } catch (SQLException e) {
+            throw new DAOException(e.getMessage());
+        } finally {
+            if (rs != null) {
+                try {
+                    rs.close();
+                } catch (SQLException e) {
+                    throw new DAOException(e.getMessage());
+                }
+            }   
+            if (ps != null) {
+                try {
+                    ps.close();
+                } catch (SQLException e) {
+                    throw new DAOException(e.getMessage());
+                }
+            }
+        }
+        
+        return Jsoner.serialize(hourSummary);
         
     }
     

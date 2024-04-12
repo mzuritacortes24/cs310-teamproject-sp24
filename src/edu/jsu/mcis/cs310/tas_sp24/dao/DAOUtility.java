@@ -47,14 +47,12 @@ public final class DAOUtility {
             }
             
             int dailytotalminutes = 0;                                              /* initialize variables to hold punches */
-            LocalDateTime clock_in = null;                                          /*  */
-            LocalDateTime clock_out = null;                                         /*  */
-            LocalDateTime lunch_in = null;                                          /*  */
-            LocalDateTime lunch_out = null;                                         /*  */
-            LocalDateTime time_out = null;                                          /*  */
             Boolean weekend = false;                                                /*  */
             
             for(Punch p : dailypunchlist){
+                
+                System.out.println(p.printOriginal());
+                System.out.println(p.printAdjusted());
                 
                 if((p.getAdjustedtimestamp().getDayOfWeek() == DayOfWeek.SUNDAY) || (p.getAdjustedtimestamp().getDayOfWeek() == DayOfWeek.SATURDAY)){   /* check to see if the punch falls on a weekend */
 
@@ -62,120 +60,11 @@ public final class DAOUtility {
 
                 }
             
-                switch (p.getAdjustmenttype()){                                     /* sort punches based on adjustment type and event type */
-
-                    case NONE -> {
-
-                        switch (p.getPunchtype()) {
-
-                            case CLOCK_OUT -> {
-
-                                clock_out = p.getAdjustedtimestamp();
-
-                            }
-
-                            case CLOCK_IN -> {
-
-                                clock_in = p.getAdjustedtimestamp();
-
-                            }
-
-                            case TIME_OUT -> {
-
-                                time_out = p.getAdjustedtimestamp();
-
-                            }
-
-                            default -> {
-
-                                throw new AssertionError(p.getPunchtype().name());
-
-                            }
-
-                        }
-
-                    }
-
-                    case SHIFT_START -> {
-
-                        clock_in = p.getAdjustedtimestamp();
-
-                    }
-
-                    case SHIFT_STOP -> {
-
-                        clock_out = p.getAdjustedtimestamp();
-
-                    }
-
-                    case SHIFT_DOCK -> {
-
-                        if(p.getPunchtype() == EventType.CLOCK_OUT){
-
-                            clock_out = p.getAdjustedtimestamp();
-
-                        }
-
-                        else if(p.getPunchtype() == EventType.CLOCK_IN){
-
-                            clock_in = p.getAdjustedtimestamp();
-
-                        }
-
-                    }
-
-                    case LUNCH_START -> {
-
-                        lunch_out = p.getAdjustedtimestamp();
-
-                    }
-
-                    case LUNCH_STOP -> {
-
-                        lunch_in = p.getAdjustedtimestamp();
-
-                    }
-
-                    case INTERVAL_ROUND -> {
-
-                        if(p.getPunchtype() == EventType.CLOCK_OUT){
-
-                            clock_out = p.getAdjustedtimestamp();
-
-                        }
-
-                        else if(p.getPunchtype() == EventType.CLOCK_IN){
-
-                            clock_in = p.getAdjustedtimestamp();
-
-                        }
-
-                    }
-
-                    default -> {
-
-                        throw new AssertionError(p.getPunchtype().name());
-
-                    }
-
-                }
-
             }
 
             try{
 
-                dailytotalminutes = (int) ChronoUnit.MINUTES.between(clock_in, clock_out);                               /* try to calculate minutes assuming both upper and lower bounds exist */
-
-            }
-            catch(Exception e){}
-            
-            try{
-
-                if((lunch_out != null) && (lunch_in == null)){
-
-                    dailytotalminutes = (int) ChronoUnit.MINUTES.between(clock_in, lunch_out);                           /* try to calculate minutes assuming both upper and lower bounds exist */
-
-                }
+                dailytotalminutes = (int) ChronoUnit.MINUTES.between(dailypunchlist.get(0).getAdjustedtimestamp(), dailypunchlist.get(dailypunchlist.size()-1).getAdjustedtimestamp());                               /* try to calculate minutes assuming both upper and lower bounds exist */
 
             }
             catch(Exception e){}
@@ -184,32 +73,22 @@ public final class DAOUtility {
                 
                 DailySchedule schedule = shift.getDailySchedule(dailypunchlist.get(0).getOriginaltimestamp().getDayOfWeek());
                 
-                try{
+                
+                if(dailypunchlist.size() > 2){   /* check for lunch break taken */
 
-                    if((lunch_out.toLocalTime().equals(schedule.getLunchstart())) && (lunch_in.toLocalTime().equals(schedule.getLunchstop()))){   /* check for lunch break taken */
-
-                        dailytotalminutes = (int) (dailytotalminutes - schedule.getLunchduration());                                                           /* subtract lunch break from total time */
-
-                    }
+                    dailytotalminutes = (int) (dailytotalminutes - schedule.getLunchduration());                                                           /* subtract lunch break from total time */
 
                 }
-                catch(Exception e){
-                    
-                    if(dailytotalminutes >= schedule.getLunchthreshold()){                                                                                /* check if lunch threshold has been reached */
 
-                        dailytotalminutes = (int) (dailytotalminutes - schedule.getLunchduration());                                                           /* subtract lunch break from total time */
+                else if(dailytotalminutes >= schedule.getLunchthreshold()){                                                                                /* check if lunch threshold has been reached */
 
-                    }
+                    dailytotalminutes = (int) (dailytotalminutes - schedule.getLunchduration());                                                           /* subtract lunch break from total time */
 
                 }
                 
             }
             
-            else if(lunch_out != null){
-                
-                dailytotalminutes = (int) (dailytotalminutes - shift.getLunchDuration());
-                
-            }
+            System.out.println(dailytotalminutes);
             
             totalminutes += dailytotalminutes;
             currentday++;
