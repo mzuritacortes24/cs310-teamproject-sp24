@@ -11,6 +11,7 @@ import java.time.temporal.TemporalAdjusters;
  * @author Mauricio
  * @author Denver
  * @author William
+ * @author Merdan
  */
 public class AbsenteeismDAO {
 
@@ -103,6 +104,33 @@ public class AbsenteeismDAO {
                 ps.executeUpdate();
 
             
+            }
+        } catch (SQLException e) {
+            throw new DAOException(e.getMessage());
+        } finally {
+            if (ps != null) {
+                try {
+                    ps.close();
+                } catch (SQLException e) {
+                    throw new DAOException(e.getMessage());
+                }
+            }
+        }
+    }
+    
+    // New method to clear absenteeism history for a specific employee (by Merdan)
+    public void clear(int employeeId) {
+        PreparedStatement ps = null;
+
+        try {
+            Connection conn = daoFactory.getConnection();
+
+            if (conn.isValid(0)) {
+                String query = "DELETE FROM absenteeism WHERE employeeid = ?";
+                ps = conn.prepareStatement(query);
+                ps.setInt(1, employeeId);
+
+                ps.executeUpdate();
             }
         } catch (SQLException e) {
             throw new DAOException(e.getMessage());
