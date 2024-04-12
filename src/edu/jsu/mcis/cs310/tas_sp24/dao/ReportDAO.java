@@ -31,41 +31,33 @@ public class ReportDAO {
         "INNER JOIN badge b ON e.badgeid = b.id " +
         "INNER JOIN department d ON e.departmentid = d.id " +
         "INNER JOIN employeetype et ON e.employeetypeid = et.id ";
-    private static final String QUERY_FIND2 = "SELECT \n" +
-                                            "    *\n" +
-                                            "FROM\n" +
-                                            "    (SELECT \n" +
-                                            "        CASE\n" +
-                                            "	WHEN (TIME(evt.timestamp) < ?)\n" +
-                                            "	     THEN CONCAT_WS(' ', UPPER(DATE_FORMAT(evt.timestamp, '%a')), \n" +
-                                            "	     DATE_FORMAT(evt.timestamp, '%m/%d/%Y'), \n" +
-                                            "	     DATE_FORMAT(evt.timestamp, '%H:%i:%s'))\n" +
-                                            "	     ELSE NULL\n" +
-                                            "         END AS arrived,\n" +
-                                            "         et.description AS employeetype,\n" +
-                                            "         e.firstname AS firstname,\n" +
-                                            "         e.badgeid AS badgeid,\n" +
-                                            "         s.description AS shift,\n" +
-                                            "         e.lastname AS lastname,\n" +
-                                            "         CASE\n" +
-                                            "             WHEN evt.eventtypeid = 1 THEN 'In'\n" +
-                                            "             ELSE 'Out'\n" +
-                                            "         END AS status\n" +
-                                            "    FROM\n" +
-                                            "        employee e\n" +
-                                            "    INNER JOIN department d ON e.departmentid = d.id\n" +
-                                            "    INNER JOIN event evt ON e.badgeid = evt.badgeid\n" +
-                                            "    INNER JOIN employeetype et ON e.employeetypeid = et.id\n" +
-                                            "    INNER JOIN shift s ON e.shiftid = s.id\n" +
-                                            "    INNER JOIN eventtype ett ON evt.eventtypeid = ett.id\n" +
-                                            "    WHERE\n" +
-                                            "        DATE(evt.timestamp) = ? \n" +
-                                            "        AND d.id = ?) \n" +
-                                            "        AS derived\n" +
-                                            "WHERE\n" +
-                                            "    (arrived IS NOT NULL)\n" +
-                                            "     OR (status = 'Out' AND arrived IS NULL)\n" +
-                                            "ORDER BY status = 'In' DESC , employeetype , lastname , firstname;"; 
+    private static final String QUERY_FIND2 = 
+        "SELECT * " +
+        "FROM(SELECT " +
+        "CASE " +
+        "    WHEN (TIME(evt.timestamp) < ?) " +
+        "    THEN CONCAT_WS(' ', UPPER(DATE_FORMAT(evt.timestamp, '%a')), " +
+        "    DATE_FORMAT(evt.timestamp, '%m/%d/%Y'), " +
+        "    DATE_FORMAT(evt.timestamp, '%H:%i:%s')) " +
+        "    ELSE NULL " +
+        "END AS arrived, " +
+        "et.description AS employeetype, " +
+        "e.firstname AS firstname, " +
+        "e.badgeid AS badgeid, " +
+        "s.description AS shift, " +
+        "e.lastname AS lastname, " +
+        "CASE " +
+        "    WHEN evt.eventtypeid = 1 THEN 'In' " +
+        "    ELSE 'Out' " +
+        "END AS status " +
+        "FROM employee e " +
+        "INNER JOIN department d ON e.departmentid = d.id " +
+        "INNER JOIN event evt ON e.badgeid = evt.badgeid " +
+        "INNER JOIN employeetype et ON e.employeetypeid = et.id " +
+        "INNER JOIN shift s ON e.shiftid = s.id " +
+        "INNER JOIN eventtype ett ON evt.eventtypeid = ett.id " +
+        "WHERE DATE(evt.timestamp) = ? "; 
+ 
     
     private static final String QUERY_GET_PUNCHES_FOR_EMPLOYEETYPE_AND_DEPARTMENT = "SELECT * FROM event INNER JOIN employee ON event.badgeid = employee.badgeid \n" +
                                                                                     "                    INNER JOIN (SELECT shift.description AS shiftdescription, shift.id AS sid FROM shift) AS s ON employee.shiftid = s.sid \n" +
@@ -187,8 +179,19 @@ public class ReportDAO {
   
             
             if (conn.isValid(0))   {
-           
-                ps = conn.prepareStatement(QUERY_FIND2);
+                
+                StringBuilder QUERY = new StringBuilder(QUERY_FIND2);
+                if (departmentId != null) {
+                    QUERY.append("AND d.id = ?) AS derived ");
+                }
+                else {
+                    QUERY.append(") AS derived ");
+                }
+                QUERY.append("WHERE (arrived IS NOT NULL) OR (status = 'Out' AND arrived IS NULL) " +
+                             "ORDER BY status = 'In' DESC , employeetype , lastname , firstname;");
+                
+                ps = conn.prepareStatement(QUERY.toString());
+                
                 LocalDate date = dateTime.toLocalDate();
                 LocalTime time = dateTime.toLocalTime();
                 ps.setTime(1, java.sql.Time.valueOf(time));
