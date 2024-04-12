@@ -108,7 +108,7 @@ public class Punch {
 
                     }
 
-                    else{
+                    else if ((punchtime.getMinute()%15) != 0){
                                             
                         roundTimestamp(s);                                                                                                                                                                                                /*  */
 
@@ -173,7 +173,7 @@ public class Punch {
 
                     }
 
-                    else if((punchtime == (schedule.getLunchstop())) || ((punchtime.isAfter(schedule.getLunchstart())))){                                                                                                                                                            /* check if punch is lunch clock in */
+                    else if((punchtime == (schedule.getLunchstop())) || (((punchtime.isBefore(schedule.getLunchstop()))) && (punchtime.isAfter(schedule.getLunchstart())))){                                                                                                                                                            /* check if punch is lunch clock in */
 
                         adjustedtimestamp = LocalDateTime.of(punchdate, schedule.getLunchstop());                                                                                                                                                                          /* set values of adjusted time stamp */
                         adjustmenttype = PunchAdjustmentType.LUNCH_STOP;                                                                                                                                                                                                    /*  */
@@ -181,7 +181,7 @@ public class Punch {
                     }
                     
                     
-                    else{
+                    else if ((punchtime.getMinute()%15) != 0){
 
                         roundTimestamp(s);                                                                                                                                                                                                /*  */
                     
