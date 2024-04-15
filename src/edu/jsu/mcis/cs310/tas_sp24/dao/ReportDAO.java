@@ -22,7 +22,7 @@ import java.util.List;
 
 public class ReportDAO {
 
-    private static final String QUERY_FIND1 = 
+    private static final String QUERY_BADGE_SUMMARY_FOR_A_DEPARTMENT = 
         "SELECT b.id AS badgeid, " +
         "CONCAT(e.lastname, ', ', e.firstname, IFNULL(CONCAT(' ', e.middlename), '')) AS fullname, " +
         "d.description AS department, " +
@@ -30,7 +30,19 @@ public class ReportDAO {
         "FROM employee e " +
         "INNER JOIN badge b ON e.badgeid = b.id " +
         "INNER JOIN department d ON e.departmentid = d.id " +
-        "INNER JOIN employeetype et ON e.employeetypeid = et.id ";
+        "INNER JOIN employeetype et ON e.employeetypeid = et.id " +
+        "WHERE e.departmentid = ? " + 
+        "ORDER BY e.lastname, e.firstname, e.middlename";
+    private static final String QUERY_BADGE_SUMMARY_FOR_ALL_DEPARTMENTS = 
+        "SELECT b.id AS badgeid, " +
+        "CONCAT(e.lastname, ', ', e.firstname, IFNULL(CONCAT(' ', e.middlename), '')) AS fullname, " +
+        "d.description AS department, " +
+        "et.description AS employeetype " +
+        "FROM employee e " +
+        "INNER JOIN badge b ON e.badgeid = b.id " +
+        "INNER JOIN department d ON e.departmentid = d.id " +
+        "INNER JOIN employeetype et ON e.employeetypeid = et.id " +
+        "ORDER BY e.lastname, e.firstname, e.middlename";
     private static final String QUERY_FIND2 = 
         "SELECT * " +
         "FROM(SELECT " +
@@ -87,7 +99,7 @@ public class ReportDAO {
                                                                  "WHERE (timestamp >= ? AND timestamp <= ?)" + 
                                                                  "ORDER BY lastname, firstname, middlename";
     
-    private static final String QUERY_FIND4 =
+    private static final String QUERY_EMPLOYEE_SUMMARY_FOR_A_DEPARTMENT =
         "SELECT e.firstname AS firstname, " +
         "et.description AS employeetype, " +
         "e.badgeid AS badgeid, " +
@@ -99,7 +111,24 @@ public class ReportDAO {
         "FROM employee e " +
         "INNER JOIN department d ON e.departmentid = d.id " +
         "INNER JOIN employeetype et ON e.employeetypeid = et.id " +
-        "INNER JOIN shift s ON e.shiftid = s.id ";
+        "INNER JOIN shift s ON e.shiftid = s.id " +
+        "WHERE d.id = ? " +
+        "ORDER BY d.id DESC,e.firstname,e.lastname, e.middlename";
+    
+    private static final String QUERY_EMPLOYEE_SUMMARY_FOR_ALL_DEPARTMENTS =
+        "SELECT e.firstname AS firstname, " +
+        "et.description AS employeetype, " +
+        "e.badgeid AS badgeid, " +
+        "s.description AS shift, " +
+        "e.middlename AS middlename, " +
+        "DATE_FORMAT(e.active, '%m/%d/%Y') AS active, " +
+        "d.description AS department, " +
+        "e.lastname AS lastname " +
+        "FROM employee e " +
+        "INNER JOIN department d ON e.departmentid = d.id " +
+        "INNER JOIN employeetype et ON e.employeetypeid = et.id " +
+        "INNER JOIN shift s ON e.shiftid = s.id " +
+        "ORDER BY d.id DESC,e.firstname,e.lastname, e.middlename";
                                                 
 
     private final DAOFactory daoFactory;
@@ -117,21 +146,13 @@ public class ReportDAO {
             Connection conn = daoFactory.getConnection();
     
             if (conn.isValid(0)) {
-                // Start building the SQL query for null clause
-                StringBuilder QUERY = new StringBuilder(QUERY_FIND1);
-    
-                // Conditionally add WHERE clause if departmentId is not null
+                    
                 if (departmentId != null) {
-                    QUERY.append("WHERE e.departmentid = ? ");
-                }
-    
-                QUERY.append("ORDER BY e.lastname, e.firstname, e.middlename");
-    
-                ps = conn.prepareStatement(QUERY.toString());
-    
-                // Set the departmentId parameter if not null
-                if (departmentId != null) {
+                    ps = conn.prepareStatement(QUERY_BADGE_SUMMARY_FOR_A_DEPARTMENT);
                     ps.setInt(1, departmentId);
+                }
+                else if(departmentId == null)   {
+                    ps = conn.prepareStatement(QUERY_BADGE_SUMMARY_FOR_ALL_DEPARTMENTS);
                 }
     
                 rs = ps.executeQuery();
@@ -386,19 +407,13 @@ public class ReportDAO {
             Connection conn = daoFactory.getConnection();
     
             if (conn.isValid(0)) {
-           
-                StringBuilder QUERY = new StringBuilder(QUERY_FIND4);
-                    
-                if (departmentId != null) {
-                    QUERY.append("WHERE d.id = ? ");
-                }
-    
-                QUERY.append("ORDER BY d.id DESC,e.firstname,e.lastname, e.middlename");
-    
-                ps = conn.prepareStatement(QUERY.toString());
-    
-                if (departmentId != null) {
+     
+                if (departmentId != null) { 
+                    ps = conn.prepareStatement(QUERY_EMPLOYEE_SUMMARY_FOR_A_DEPARTMENT);
                     ps.setInt(1, departmentId);
+                }
+                else if (departmentId == null)  {
+                    ps = conn.prepareStatement(QUERY_EMPLOYEE_SUMMARY_FOR_ALL_DEPARTMENTS);
                 }
     
                 rs = ps.executeQuery();
