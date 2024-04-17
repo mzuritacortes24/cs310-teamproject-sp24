@@ -38,10 +38,8 @@ public class AbsenteeismDAOUnitTest {
     public void testClearAbsenteeismHistoryForNonExistingEmployee() {
         AbsenteeismDAO absenteeismDAO = daoFactory.getAbsenteeismDAO();
 
-        // Try to clear absenteeism history for a non-existing employee
-        // In this case, the clear() method should not throw any exception
-        // or cause any problem since the employee does not exist
-        absenteeismDAO.clear(999999); // Non-existing employee ID
+        // Non-existing employee ID
+        absenteeismDAO.clear(999999); 
 
         // Make sure no exception is thrown and the method completes successfully
         assertTrue(true);
