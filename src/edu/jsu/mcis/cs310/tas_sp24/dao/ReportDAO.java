@@ -129,8 +129,26 @@ public class ReportDAO {
         "INNER JOIN employeetype et ON e.employeetypeid = et.id " +
         "INNER JOIN shift s ON e.shiftid = s.id " +
         "ORDER BY d.id DESC,e.firstname,e.lastname, e.middlename";
+    
+    private static final String QUERY_GET_ABSENTEEISM_HISTORY =
+        "SELECT e.badgeid AS badgeid, " +
+        "e.firstname AS firstname, " +
+        "e.lastname AS lastname, " +
+        "d.description AS department, " +
+        "p.payperiod, " +
+        "ROUND(SUM(CASE WHEN evt.eventtypeid = 1 THEN 1 ELSE 0 END) / COUNT(*), 2) * 100 AS absenteeism_percentage, " +
+        "AVG(ROUND(SUM(CASE WHEN evt.eventtypeid = 1 THEN 1 ELSE 0 END) / COUNT(*), 2) * 100) OVER (PARTITION BY e.badgeid ORDER BY p.payperiod ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS lifetime_absenteeism " +
+        "FROM employee e " +
+        "INNER JOIN badge b ON e.badgeid = b.id " +
+        "INNER JOIN department d ON e.departmentid = d.id " +
+        "INNER JOIN payperiod p ON e.payperiodid = p.id " +
+        "LEFT JOIN event evt ON e.badgeid = evt.badgeid AND evt.timestamp BETWEEN p.startdate AND p.enddate " +
+        "WHERE e.badgeid = ? " +
+        "GROUP BY e.badgeid, p.payperiod " +
+        "ORDER BY p.payperiod DESC " +
+        "LIMIT 12";
                                                 
-
+    
     private final DAOFactory daoFactory;
 
     public ReportDAO(DAOFactory daoFactory) {
@@ -449,6 +467,57 @@ public class ReportDAO {
                 }
             }
         }     
+        return Jsoner.serialize(reportData);
+    }
+    
+    public String getAbsenteeismHistory(Integer employeeId) {
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        JsonObject reportData = new JsonObject();
+        JsonArray absenteeismHistory = new JsonArray();
+
+        try {
+            Connection conn = daoFactory.getConnection();
+
+            if (conn.isValid(0)) {
+                ps = conn.prepareStatement(QUERY_GET_ABSENTEEISM_HISTORY);
+                ps.setInt(1, employeeId);
+
+                rs = ps.executeQuery();
+
+                while (rs.next()) {
+                    JsonObject record = new JsonObject();
+                    record.put("badgeid", rs.getString("badgeid"));
+                    record.put("name", rs.getString("firstname") + " " + rs.getString("lastname"));
+                    record.put("department", rs.getString("department"));
+                    record.put("payperiod", rs.getString("payperiod"));
+                    record.put("absenteeism_percentage", rs.getDouble("absenteeism_percentage"));
+                    record.put("lifetime_absenteeism", rs.getDouble("lifetime_absenteeism"));
+                    absenteeismHistory.add(record);
+                }
+            }
+
+            reportData.put("absenteeismhistory", absenteeismHistory);
+
+        } catch (SQLException e) {
+            throw new DAOException(e.getMessage());
+        } finally {
+            if (rs != null) {
+                try {
+                    rs.close();
+                } catch (SQLException e) {
+                    throw new DAOException(e.getMessage());
+                }
+            }
+            if (ps != null) {
+                try {
+                    ps.close();
+                } catch (SQLException e) {
+                    throw new DAOException(e.getMessage());
+                }
+            }
+        }
+
         return Jsoner.serialize(reportData);
     }
 }
