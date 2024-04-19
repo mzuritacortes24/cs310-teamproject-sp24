@@ -5,6 +5,12 @@ import org.junit.*;
 import static org.junit.Assert.*;
 import com.github.cliftonlabs.json_simple.*;
 
+/**
+ * 
+ * @author willhughes
+ * @author mzuritacortes
+ */
+
 public class Version2_EmployeeSummaryTest {
 
     private ReportDAO reportDAO;
