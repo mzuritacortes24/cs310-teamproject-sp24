@@ -2,7 +2,7 @@ package edu.jsu.mcis.cs310.tas_sp24;
 import java.time.*;  
 import java.time.format.DateTimeFormatter;
 /**
- *
+ * Employee datatype which holds the data for a single employee instance
  * @author Mauricio
  */
 public class Employee {
@@ -16,6 +16,18 @@ public class Employee {
     private final Shift shift;
     private final EmployeeType employeeType;
 
+    /**
+     *
+     * @param id The employee id
+     * @param firstname The employee's first name
+     * @param middlename The employee's middle name
+     * @param lastname The employee's last name
+     * @param active The date in which the employee began work
+     * @param badge The badge object associated with the employee
+     * @param department The department object associated with employee
+     * @param shift The shift object associated with the employee
+     * @param employeeType The employeetype object associated with the employee
+     */
     public Employee(int id, String firstname, String middlename, String lastname, LocalDateTime active, Badge badge, Department department, Shift shift, EmployeeType employeeType ) {
         this.id = id;
         this.firstname = firstname;
@@ -28,41 +40,83 @@ public class Employee {
         this.employeeType = employeeType;
         
     } 
+
+    /**
+     * Getter for the id class variable
+     * @return
+     */
     public int getId() {
         return id;
     }
 
+    /**
+     * Getter for the firstname class variable
+     * @return
+     */
     public String getFirstname() {
         return firstname;
     }
 
+    /**
+     * Getter for the middlename class variable
+     * @return
+     */
     public String getMiddlename() {
         return middlename;
     }
 
+    /**
+     * Getter for the lastname class variable
+     * @return
+     */
     public String getLastname() {
         return lastname;
     }
 
+    /**
+     * Getter for the active class variable
+     * @return
+     */
     public LocalDateTime getActive() {
         return active;
     }
 
+    /**
+     * Getter for the badge class variable
+     * @return
+     */
     public Badge getBadge() {
         return badge;
     }
 
+    /**
+     * Getter for the department class variable
+     * @return
+     */
     public Department getDepartment() {
         return department;
     }
 
+    /**
+     * Getter for the shift class variable
+     * @return
+     */
     public Shift getShift() {
         return shift;
     }
     
+    /**
+     * Getter for the employeetype class variable
+     * @return
+     */
     public EmployeeType getEmployeeType() {
         return employeeType;
     }
+
+    /**
+     * toString override for the class
+     * @return
+     */
     @Override
     public String toString() {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");

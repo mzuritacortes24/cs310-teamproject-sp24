@@ -3,6 +3,10 @@ package edu.jsu.mcis.cs310.tas_sp24.dao;
 import java.io.*;
 import java.util.Properties;
 
+/**
+ *
+ * @author samkb
+ */
 public class DAOProperties {
 
     private static final String PROPERTIES_FILE = "dao.properties";
@@ -23,12 +27,21 @@ public class DAOProperties {
 
     }
 
+    /**
+     *
+     * @param prefix
+     */
     public DAOProperties(String prefix) {
 
         this.prefix = prefix;
 
     }
 
+    /**
+     *
+     * @param key
+     * @return
+     */
     public String getProperty(String key) {
 
         String fullKey = prefix + "." + key;

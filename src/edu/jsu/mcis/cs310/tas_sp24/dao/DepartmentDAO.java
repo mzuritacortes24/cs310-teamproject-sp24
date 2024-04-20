@@ -2,7 +2,7 @@ package edu.jsu.mcis.cs310.tas_sp24.dao;
 import edu.jsu.mcis.cs310.tas_sp24.Department;
 import java.sql.*;
 /**
- *
+ * DepartmentDAO class for class for creating department objects from the database
  * @author Denver
  * @author William
  */
@@ -16,6 +16,11 @@ public class DepartmentDAO {
         this.daoFactory = daoFactory;
     }
 
+    /**
+     * A find method which retrieves the department instance from the database
+     * @param id The department id to retrieve from the database
+     * @return
+     */
     public Department find(int id) { // set department, ps and rs all as nulls
         Department department = null;
         PreparedStatement ps = null;

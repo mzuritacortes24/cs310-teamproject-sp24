@@ -1,13 +1,44 @@
 package edu.jsu.mcis.cs310.tas_sp24;
 
+/**
+ *
+ * @author samkb
+ */
 public enum PunchAdjustmentType {
 
+    /**
+     *
+     */
     NONE("None"),
+
+    /**
+     *
+     */
     SHIFT_START("Shift Start"),
+
+    /**
+     *
+     */
     SHIFT_STOP("Shift Stop"),
+
+    /**
+     *
+     */
     SHIFT_DOCK("Shift Dock"),
+
+    /**
+     *
+     */
     LUNCH_START("Lunch Start"),
+
+    /**
+     *
+     */
     LUNCH_STOP("Lunch Stop"),
+
+    /**
+     *
+     */
     INTERVAL_ROUND("Interval Round");
 
     private final String description;
@@ -16,6 +47,10 @@ public enum PunchAdjustmentType {
         description = d;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public String toString() {
         return description;

@@ -19,7 +19,10 @@ import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.List;
 
-
+/**
+ * ReportDAO class to create reports for the user to view the data from the database
+ * @author samkb
+ */
 public class ReportDAO {
 
     private static final String QUERY_BADGE_SUMMARY_FOR_A_DEPARTMENT = 
@@ -151,10 +154,19 @@ public class ReportDAO {
     
     private final DAOFactory daoFactory;
 
+    /**
+     *
+     * @param daoFactory A connection to the database
+     */
     public ReportDAO(DAOFactory daoFactory) {
         this.daoFactory = daoFactory;
     }
 
+    /**
+     * A get method to create a report of all employees in a specific department
+     * @param departmentId The department whose badges should be retrieved
+     * @return
+     */
     public String getBadgeSummary(Integer departmentId) {
         PreparedStatement ps = null;
         ResultSet rs = null;
@@ -206,6 +218,12 @@ public class ReportDAO {
         return Jsoner.serialize(badgeSummary);
     }
     
+    /**
+     * A get method to create a report of who is currently clocked in and who is not clocked in for a specific department
+     * @param dateTime The time in which to check for who is in and who is out
+     * @param departmentId The department to whose employees are to be included in the report
+     * @return
+     */
     public String getWhosInWhosOut(LocalDateTime dateTime, Integer departmentId)   {
 
         PreparedStatement ps = null;
@@ -280,6 +298,13 @@ public class ReportDAO {
         
     }
     
+    /**
+     * A get method to create a report of the hours worked by employees in a specific department or of a specific type
+     * @param date The date of the pay period in which the hours occurred
+     * @param departmentid The department whose employees should be included
+     * @param type The type of employees who should be included
+     * @return
+     */
     public String getHoursSummary(LocalDate date, Integer departmentid, EmployeeType type){
         
         PreparedStatement ps = null;
@@ -415,6 +440,11 @@ public class ReportDAO {
         
     }
     
+    /**
+     * A get method to create a report of a specific departments employees
+     * @param departmentId The department whose employee should be included
+     * @return
+     */
     public String getEmployeeSummary(Integer departmentId)   {
         
         PreparedStatement ps = null;
@@ -470,6 +500,11 @@ public class ReportDAO {
         return Jsoner.serialize(reportData);
     }
     
+    /**
+     * A get method that should create a report of the history of a specific employee's absenteeism
+     * @param employeeId The employee whose absenteeism should be included
+     * @return
+     */
     public String getAbsenteeismHistory(Integer employeeId) {
         PreparedStatement ps = null;
         ResultSet rs = null;

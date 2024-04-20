@@ -2,6 +2,10 @@ package edu.jsu.mcis.cs310.tas_sp24.dao;
 
 import java.sql.*;
 
+/**
+ *
+ * @author samkb
+ */
 public final class DAOFactory {
 
     private static final String PROPERTY_URL = "url";
@@ -12,6 +16,10 @@ public final class DAOFactory {
     
     private Connection conn = null;
 
+    /**
+     *
+     * @param prefix
+     */
     public DAOFactory(String prefix) {
 
         DAOProperties properties = new DAOProperties(prefix);
@@ -32,30 +40,58 @@ public final class DAOFactory {
         return conn;
     }
 
+    /**
+     *
+     * @return
+     */
     public BadgeDAO getBadgeDAO() {
         return new BadgeDAO(this);
     }
     
+    /**
+     *
+     * @return
+     */
     public EmployeeDAO getEmployeeDAO() {
         return new EmployeeDAO(this);
     }
     
+    /**
+     *
+     * @return
+     */
     public PunchDAO getPunchDAO() {
         return new PunchDAO(this);
     }
     
+    /**
+     *
+     * @return
+     */
     public DepartmentDAO getDepartmentDAO() {
         return new DepartmentDAO(this);
     }    
     
+    /**
+     *
+     * @return
+     */
     public ShiftDAO getShiftDAO() {
         return new ShiftDAO(this);
     }
     
+    /**
+     *
+     * @return
+     */
     public AbsenteeismDAO getAbsenteeismDAO() {
         return new AbsenteeismDAO(this);
     }
     
+    /**
+     *
+     * @return
+     */
     public ReportDAO getReportDAO() {
         return new ReportDAO(this);
     }

@@ -8,6 +8,7 @@ import edu.jsu.mcis.cs310.tas_sp24.Employee;
 import java.time.DayOfWeek;
 import java.time.temporal.TemporalAdjusters;
 /**
+ * AbsenteeismDAO class for creating absenteeism objects from the database
  * @author Mauricio
  * @author Denver
  * @author William
@@ -22,11 +23,23 @@ public class AbsenteeismDAO {
     private final DAOFactory daoFactory;
 
     // Constructor: Initializes the DAO with a factory for creating connections
+
+    /**
+     *
+     * @param daoFactory A connection to the database
+     */
     public AbsenteeismDAO(DAOFactory daoFactory) {
         this.daoFactory = daoFactory;
     }
 
     // Find Employee and their pay period
+
+    /**
+     * A find method which retrieves the absenteeism instance from the database
+     * @param employee The employee object associated with this absenteeism calculation
+     * @param payPeriod The pay period of this absenteeism calculation
+     * @return
+     */
     public Absenteeism find(Employee employee, LocalDate payPeriod) {
 
         Absenteeism absenteeism = null;
@@ -82,6 +95,11 @@ public class AbsenteeismDAO {
     }
 
     // Create method for Absenteeism using an Absenteeism object
+
+    /**
+     * A create method which adds the absenteeism instance to the database
+     * @param absenteeism The absenteeism abject to add
+     */
     public void create (Absenteeism absenteeism)    {
         
         PreparedStatement ps = null;
@@ -119,6 +137,11 @@ public class AbsenteeismDAO {
     }
     
     // New method to clear absenteeism history for a specific employee (by Merdan)
+
+    /**
+     * A clear method which remove an absenteeism instance from the database
+     * @param employeeId The employee whose absenteeism is to be removed
+     */
     public void clear(int employeeId) {
         PreparedStatement ps = null;
 

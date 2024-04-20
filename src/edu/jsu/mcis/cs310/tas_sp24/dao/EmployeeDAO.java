@@ -7,7 +7,7 @@ import edu.jsu.mcis.cs310.tas_sp24.Shift;
 import java.sql.*;
 import java.time.LocalDateTime;
 /**
- *
+ * EmployeeDAO class for class for creating employee objects from the database
  * @author Mauricio
  */
 public class EmployeeDAO {
@@ -18,11 +18,22 @@ public class EmployeeDAO {
     private final DAOFactory daoFactory;
 
     // Constructor: Initializes the DAO with a factory for creating connections
+
+    /**
+     * 
+     * @param daoFactory A connection to the database
+     */
     public EmployeeDAO(DAOFactory daoFactory) {
         this.daoFactory = daoFactory;
     }
 
     // Finds an employee by their ID
+
+    /**
+     * A find method which retrieves the employee instance from the database
+     * @param id The employee id to retrieve from the database
+     * @return
+     */
     public Employee find(int id) {
         
         PreparedStatement ps = null;
@@ -77,6 +88,12 @@ public class EmployeeDAO {
     }
 
     // Finds an employee by their badge
+
+    /**
+     * A find method which retrieves the employee instance from the database 
+     * @param badge The badge of the employee to be retrieved from the database
+     * @return
+     */
     public Employee find(Badge badge) {
         PreparedStatement ps = null;
         ResultSet rs = null;
@@ -133,6 +150,13 @@ public class EmployeeDAO {
         return null;
     }
     // Maps a row of the result set to an Employee object
+
+    /**
+     * A method to create an employee object from a ResultSet object
+     * @param rs The resultset object containing the employee data
+     * @return
+     * @throws SQLException
+     */
     public Employee mapToEmployee(ResultSet rs) throws SQLException {
         // Extract employee details from the result set
         int id = rs.getInt("id");

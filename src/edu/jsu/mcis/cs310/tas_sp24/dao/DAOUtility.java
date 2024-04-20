@@ -7,6 +7,7 @@ import java.time.temporal.ChronoUnit;
 import com.github.cliftonlabs.json_simple.*;
 import edu.jsu.mcis.cs310.tas_sp24.Badge;
 import edu.jsu.mcis.cs310.tas_sp24.DailySchedule;
+import edu.jsu.mcis.cs310.tas_sp24.EventType;
 import edu.jsu.mcis.cs310.tas_sp24.Punch;
 import edu.jsu.mcis.cs310.tas_sp24.Shift;
 import java.math.BigDecimal;
@@ -21,6 +22,12 @@ import java.text.DecimalFormat;
  */
 public final class DAOUtility {
     
+    /**
+     * A calculation method which determines the total time accrued in a time period
+     * @param punchlist The list containing all of the punches to be used
+     * @param shift The shift object containing the adjustment rules
+     * @return
+     */
     public static int calculateTotalMinutes(ArrayList<Punch> punchlist, Shift shift){
         
         int totalminutes = 0;
@@ -34,7 +41,7 @@ public final class DAOUtility {
             
             for(Punch punch : punchlist){
                 
-                if(punch.getOriginaltimestamp().getDayOfMonth() == currentday){
+                if(punch.getOriginaltimestamp().getDayOfMonth() == currentday && punch.getPunchtype() != EventType.TIME_OUT){
                     
                     dailypunchlist.add(punch);
                     
@@ -96,6 +103,12 @@ public final class DAOUtility {
     }
     
     // getPunchListAsJSON Function
+
+    /**
+     * A toJson method that formats a list of punches as a Json object
+     * @param dailypunchlist The list containing all punches to be included
+     * @return
+     */
     @SuppressWarnings("null")
     public static String getPunchListAsJSON(ArrayList<Punch> dailypunchlist)  {
         Badge badge = null;
@@ -118,6 +131,12 @@ public final class DAOUtility {
     
     }
     
+    /**
+     * A toJson method that formats the list of punches and the total minutes as a Json object
+     * @param punchlist The list containing all of punches to be included
+     * @param shift The shift object containing the adjustment rules
+     * @return
+     */
     public static String getPunchListPlusTotalsAsJSON(ArrayList<Punch> punchlist, Shift shift){
         JsonObject json = new JsonObject();
         JsonArray punchArray = new JsonArray();
@@ -151,6 +170,12 @@ public final class DAOUtility {
         return Jsoner.serialize(json);
     }
 
+    /**
+     * A calculation method for determining the absenteeism
+     * @param punchList The list containing all of punches to be used
+     * @param shift The shift object containing the adjustment rules
+     * @return
+     */
     public static BigDecimal calculateAbsenteeism(ArrayList<Punch> punchList, Shift shift) {
         //Formula: A% = (Schedule − Worked  / Schedule) × 100
 

@@ -10,6 +10,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 /**
+ * PunchDAO class for creating punch objects from the database
  * @author samkb 
  * @author mgarlyyev
  */
@@ -28,6 +29,11 @@ public class PunchDAO {
 
     }
     
+    /**
+     * A find method which retrieves the punch instance from the database
+     * @param id The punch id to retrieve from the database
+     * @return
+     */
     public Punch find(int id){
         
         Punch punch = null;                                                     /* initialize Punch object */
@@ -110,6 +116,12 @@ public class PunchDAO {
     }
 
     // Create method for Punch using Punch object
+
+    /**
+     * A create method which adds a punch instance to the database
+     * @param punch The punch object to be added to the database
+     * @return
+     */
     public int create(Punch punch) {
 
         // Default to 0, indicating failure
@@ -172,6 +184,13 @@ public class PunchDAO {
     }
     
     // List method for Punch using Badge object and LocalDate
+
+    /**
+     * A list method to list all the punches from a single employee on a specific day
+     * @param badge The employee badge whose punches should be listed
+     * @param date The date of the punches that should be listed
+     * @return
+     */
     public ArrayList<Punch> list(Badge badge, LocalDate date) {
 
         // Initialize list of Punch objects
@@ -229,7 +248,13 @@ public class PunchDAO {
         return punches;
     }
     
-    
+    /**
+     * A list method to list all the punches from a single employee during a period of time
+     * @param badge The employee badge whose punches should be listed
+     * @param start The start date of the punches that should be listed
+     * @param end The end of the punches that should be listed
+     * @return
+     */
     public ArrayList<Punch> list (Badge badge, LocalDate start, LocalDate end) {
         
         // Initialize an empty list list to store the punches

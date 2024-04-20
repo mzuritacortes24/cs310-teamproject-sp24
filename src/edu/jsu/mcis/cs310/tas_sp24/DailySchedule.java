@@ -5,7 +5,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.Map;
 
 /**
- *
+ * DailySchedule datatype which holds the schedule info for a single shift instance
  * @author samkb
  */
 public class DailySchedule {
@@ -21,6 +21,10 @@ public class DailySchedule {
     private final long lunchduration;
     private final long shiftduration;
     
+    /**
+     *
+     * @param scheduleInfo A Map containing Strings with schedule info
+     */
     public DailySchedule(Map<String, String> scheduleInfo) {
         
         this.shiftstart = LocalTime.parse(scheduleInfo.get("shiftstart"));
@@ -37,42 +41,82 @@ public class DailySchedule {
         
     }
 
+    /**
+     * Getter for the shiftstart class variable
+     * @return
+     */
     public LocalTime getShiftstart() {
         return shiftstart;
     }
 
+    /**
+     * Getter for the shiftstop class variable
+     * @return
+     */
     public LocalTime getShiftstop() {
         return shiftstop;
     }
 
+    /**
+     * Getter for the lunchstart class variable
+     * @return
+     */
     public LocalTime getLunchstart() {
         return lunchstart;
     }
 
+    /**
+     * Getter for the lunchstop class variable
+     * @return
+     */
     public LocalTime getLunchstop() {
         return lunchstop;
     }
 
+    /**
+     * Getter for the roundinterval class variable
+     * @return
+     */
     public int getRoundinterval() {
         return roundinterval;
     }
 
+    /**
+     * Getter for the graceperiod class variable
+     * @return
+     */
     public int getGraceperiod() {
         return graceperiod;
     }
 
+    /**
+     * Getter for the dockpenalty class variable
+     * @return
+     */
     public int getDockpenalty() {
         return dockpenalty;
     }
 
+    /**
+     * Getter for the lunchthreshold class variable
+     * @return
+     */
     public int getLunchthreshold() {
         return lunchthreshold;
     }
     
+    /**
+     * Getter for the lunchduration class variable
+     * @return
+     */
     public long getLunchduration() {
         return lunchduration;
     }
     
+    /**
+     * Getter for the shiftduration class variable
+     * @return
+     */
     public long getShiftduration() {
         return shiftduration;
     }

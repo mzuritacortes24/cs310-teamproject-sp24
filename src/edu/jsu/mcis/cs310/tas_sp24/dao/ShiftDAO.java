@@ -11,6 +11,12 @@ import java.util.*;
 /*
  * @author blake
  */
+
+/**
+ * ShiftDAO class for creating shift objects from the database
+ * @author samkb
+ */
+
 public class ShiftDAO {
     
     private final DAOFactory daoFactory;
@@ -26,7 +32,12 @@ public class ShiftDAO {
     private static final String QUERY_GET_SCHEDULEOVERRIDE = "SELECT * FROM scheduleoverride WHERE ((? >= start) AND ((? <= end) OR (end IS NULL)))";
     private static final String QUERY_GET_DAILYSCHEDULE = "SELECT * FROM dailyschedule WHERE id = ?";
     
-     public Shift find(int id) {
+    /**
+     * A find method which retrieves the shift instance from the database
+     * @param id The shift id to retrieve from the database
+     * @return
+     */
+    public Shift find(int id) {
 
         Shift shift = null;
         
@@ -105,6 +116,12 @@ public class ShiftDAO {
      
 
      // find shift
+
+    /**
+     * A find method which retrieves the shift instance from the database
+     * @param badge The badge whose shift should be retrieved from the database
+     * @return
+     */
      public Shift find(Badge badge) {
          
         Shift shift = null;
@@ -180,6 +197,12 @@ public class ShiftDAO {
 
     }
      
+    /**
+     * A find method which retrieves the shift instance from the database for a specific date
+     * @param badge The badge whose shift should be retrieved from the database
+     * @param punchdate The date of the shift to retrieve from the database
+     * @return
+     */
     public Shift find(Badge badge, LocalDate punchdate) {
 
         Shift shift = null;

@@ -7,8 +7,16 @@ import java.time.temporal.ChronoUnit;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAdjusters;
           
+/**
+ *
+ * @author samkb
+ */
 public class Main {
                 
+    /**
+     *
+     * @param args
+     */
     public static void main(String[] args) {
           
         // test database connectivity; get DAOs

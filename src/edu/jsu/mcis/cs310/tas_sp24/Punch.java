@@ -6,7 +6,9 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 
 /**
+ * Punch datatype which contains information for a single punch instance
  * @author samkb
+ * 
  */
 
 public class Punch {
@@ -19,6 +21,12 @@ public class Punch {
     private LocalDateTime adjustedtimestamp;                                    /* " */
     private PunchAdjustmentType adjustmenttype;                                 /* " */
     
+    /**
+     *
+     * @param terminalid The id of the terminal used for the punch
+     * @param badge The badge object for the punch instance employee
+     * @param punchtype The type of the punch instance
+     */
     public Punch(int terminalid, Badge badge, EventType punchtype){
         
         this.terminalid = terminalid;                                           /* set instance field equal to parameter */
@@ -30,6 +38,14 @@ public class Punch {
         
     }
     
+    /**
+     *
+     * @param id The database id of the punch instance
+     * @param terminalid The id of the terminal used for the punch
+     * @param badge The badge object for the punch instance employee
+     * @param originaltimestamp The timestamp of the punch instance
+     * @param punchtype The type of the punch instance
+     */
     public Punch(int id, int terminalid, Badge badge, LocalDateTime originaltimestamp, EventType punchtype){
         
         this.id = id;
@@ -42,6 +58,10 @@ public class Punch {
         
     }
     
+    /**
+     * Adjusts originaltimestamp to generate adjustedtimestamp
+     * @param s The shift object that contains the adjustment rules
+     */
     public void adjust(Shift s){
         
         LocalTime punchtime = originaltimestamp.toLocalTime();
@@ -213,6 +233,10 @@ public class Punch {
         
     }
     
+    /**
+     * Rounds the timestamp if it falls with the proper times
+     * @param s The shift object that contains the adjustment rules
+     */
     public void roundTimestamp(Shift s){
         
         LocalTime punchtime = originaltimestamp.toLocalTime();
@@ -330,48 +354,80 @@ public class Punch {
         
     }
     
+    /**
+     * Getter for the id class variable
+     * @return id
+     */
     public int getId() {
         
         return id;
         
     }
 
+    /**
+     * Getter for the terminalid class variable
+     * @return terminalid
+     */
     public int getTerminalid() {
         
         return terminalid;
         
     }
 
+    /**
+     * Getter for the badge class variable
+     * @return badge
+     */
     public Badge getBadge() {
         
         return badge;
         
     }
 
+    /**
+     * Getter for the punchtype class variable
+     * @return punchtype
+     */
     public EventType getPunchtype() {
         
         return punchtype;
         
     }
 
+    /**
+     * Getter for the originalGetter for the id class variable class variable
+     * @return originaltimestamp
+     */
     public LocalDateTime getOriginaltimestamp() {
         
         return originaltimestamp;
         
     }
     
+    /**
+     * Getter for the adjustedtimestamp class variable
+     * @return adjustedtimestamp
+     */
     public LocalDateTime getAdjustedtimestamp() {
         
         return adjustedtimestamp;
         
     }
 
+    /**
+     * Getter for the adjustmenttype class variable
+     * @return adjustmenttype
+     */
     public PunchAdjustmentType getAdjustmenttype() {
         
         return adjustmenttype;
         
     }
     
+    /**
+     * Print method for the adjustedtimestamp class variable
+     * @return Formatted adjusted timestamp
+     */
     public String printAdjusted(){
         
         DateTimeFormatter dTF = DateTimeFormatter.ofPattern("EEE MM/dd/uuuu HH:mm:ss"); /* set print pattern for originaltimestamp */
@@ -384,6 +440,10 @@ public class Punch {
          
     }
     
+    /**
+     *Print method for the originaltimestamp class variable
+     * @return Formatted original timestamp
+     */
     public String printOriginal(){
         
         DateTimeFormatter dTF = DateTimeFormatter.ofPattern("EEE MM/dd/uuuu HH:mm:ss"); /* set print pattern for originaltimestamp */
@@ -395,6 +455,10 @@ public class Punch {
         
     }
     
+    /**
+     * toString override that calls printOriginal method
+     * @return Formatted original timestamp
+     */
     @Override
     
     public String toString(){
