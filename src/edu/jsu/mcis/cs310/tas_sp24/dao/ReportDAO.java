@@ -2,6 +2,7 @@ package edu.jsu.mcis.cs310.tas_sp24.dao;
 import com.github.cliftonlabs.json_simple.JsonArray;
 import com.github.cliftonlabs.json_simple.JsonObject;
 import com.github.cliftonlabs.json_simple.Jsoner;
+import edu.jsu.mcis.cs310.tas_sp24.Employee;
 import edu.jsu.mcis.cs310.tas_sp24.EmployeeType;
 import edu.jsu.mcis.cs310.tas_sp24.Punch;
 import edu.jsu.mcis.cs310.tas_sp24.Shift;
@@ -133,23 +134,18 @@ public class ReportDAO {
         "INNER JOIN shift s ON e.shiftid = s.id " +
         "ORDER BY d.id DESC,e.firstname,e.lastname, e.middlename";
     
-    private static final String QUERY_GET_ABSENTEEISM_HISTORY =
-        "SELECT e.badgeid AS badgeid, " +
-        "e.firstname AS firstname, " +
-        "e.lastname AS lastname, " +
+    private static final String QUERY_FOR_ABSENTEEISM_HISTORY =
+        "SELECT * " +
+        "FROM( " +
+        "SELECT  e.badgeid AS badgeid, " +
+        "CONCAT(e.lastname, ', ', e.firstname, IFNULL(CONCAT(' ', e.middlename), '')) AS name, " +
         "d.description AS department, " +
-        "p.payperiod, " +
-        "ROUND(SUM(CASE WHEN evt.eventtypeid = 1 THEN 1 ELSE 0 END) / COUNT(*), 2) * 100 AS absenteeism_percentage, " +
-        "AVG(ROUND(SUM(CASE WHEN evt.eventtypeid = 1 THEN 1 ELSE 0 END) / COUNT(*), 2) * 100) OVER (PARTITION BY e.badgeid ORDER BY p.payperiod ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS lifetime_absenteeism " +
+        "DATE_SUB(DATE(evt.timestamp), INTERVAL (DAYOFWEEK(DATE(evt.timestamp)) - 1) DAY) AS date " +
         "FROM employee e " +
-        "INNER JOIN badge b ON e.badgeid = b.id " +
         "INNER JOIN department d ON e.departmentid = d.id " +
-        "INNER JOIN payperiod p ON e.payperiodid = p.id " +
-        "LEFT JOIN event evt ON e.badgeid = evt.badgeid AND evt.timestamp BETWEEN p.startdate AND p.enddate " +
-        "WHERE e.badgeid = ? " +
-        "GROUP BY e.badgeid, p.payperiod " +
-        "ORDER BY p.payperiod DESC " +
-        "LIMIT 12";
+        "INNER JOIN event evt ON e.badgeid = evt.badgeid WHERE e.id = ?) as absenteesim " +
+        "WHERE(date >= '2018-08-05') " +
+        "GROUP BY date;";
                                                 
     
     private final DAOFactory daoFactory;
@@ -505,35 +501,67 @@ public class ReportDAO {
      * @param employeeId The employee whose absenteeism should be included
      * @return
      */
-    public String getAbsenteeismHistory(Integer employeeId) {
+     public String getAbsenteeismHistory(Integer employeeId)   {
         PreparedStatement ps = null;
         ResultSet rs = null;
-        JsonObject reportData = new JsonObject();
-        JsonArray absenteeismHistory = new JsonArray();
-
+        JsonObject absenteeismHistory = new JsonObject();
+        JsonArray dataArray = new JsonArray();
+        String name = null, badgeid = null, department = null;
+        ArrayList<Double> lifeTime = new ArrayList();
+        
+        Employee employee = daoFactory.getEmployeeDAO().find(employeeId);
+        Shift shift = employee.getShift();
+        
         try {
             Connection conn = daoFactory.getConnection();
-
+    
             if (conn.isValid(0)) {
-                ps = conn.prepareStatement(QUERY_GET_ABSENTEEISM_HISTORY);
+                ps = conn.prepareStatement(QUERY_FOR_ABSENTEEISM_HISTORY);
                 ps.setInt(1, employeeId);
-
+                
                 rs = ps.executeQuery();
-
+    
+                
                 while (rs.next()) {
-                    JsonObject record = new JsonObject();
-                    record.put("badgeid", rs.getString("badgeid"));
-                    record.put("name", rs.getString("firstname") + " " + rs.getString("lastname"));
-                    record.put("department", rs.getString("department"));
-                    record.put("payperiod", rs.getString("payperiod"));
-                    record.put("absenteeism_percentage", rs.getDouble("absenteeism_percentage"));
-                    record.put("lifetime_absenteeism", rs.getDouble("lifetime_absenteeism"));
-                    absenteeismHistory.add(record);
+                    
+                    JsonObject dataObject = new JsonObject();
+                    LocalDate date = LocalDate.parse(rs.getString("date"));
+                    LocalDate begin = date.with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY));
+                    LocalDate end = begin.with(TemporalAdjusters.next(DayOfWeek.SATURDAY));
+                    ArrayList<Punch> punchList = daoFactory.getPunchDAO().list(employee.getBadge(), begin, end);
+                    for (Punch p : punchList) {
+                        p.adjust(shift);
+                    }
+                    BigDecimal percentage = DAOUtility.calculateAbsenteeism(punchList, shift);
+                    
+                    
+                    double lifetimePercentage = percentage.doubleValue();
+                    String formatLifetime = String.format("%.2f", lifetimePercentage);
+                    
+                    lifeTime.add(lifetimePercentage);
+                    int i = 0;
+                    double value = 0.0;
+                    for(double num : lifeTime)   {
+                        ++i;
+                        value += num;
+                    }
+                    
+                    value /= i;
+                    String formatValue = String.format( "%.2f", value);
+
+                    name = rs.getString("name");
+                    badgeid = rs.getString("badgeid");
+                    department = rs.getString("department");
+                    
+                    dataObject.put("payperiod", begin.toString());
+                    dataObject.put("percentage", formatLifetime);
+                    dataObject.put("lifetime", formatValue);
+                    
+                    dataArray.add(dataObject);
                 }
+                
+       
             }
-
-            reportData.put("absenteeismhistory", absenteeismHistory);
-
         } catch (SQLException e) {
             throw new DAOException(e.getMessage());
         } finally {
@@ -543,7 +571,7 @@ public class ReportDAO {
                 } catch (SQLException e) {
                     throw new DAOException(e.getMessage());
                 }
-            }
+            }   
             if (ps != null) {
                 try {
                     ps.close();
@@ -552,8 +580,13 @@ public class ReportDAO {
                 }
             }
         }
-
-        return Jsoner.serialize(reportData);
+        absenteeismHistory.put("badgeid", badgeid);
+        absenteeismHistory.put("absenteeismhistory", dataArray.reversed());
+        System.out.print(Jsoner.prettyPrint(Jsoner.serialize(absenteeismHistory)));
+        absenteeismHistory.put("name", name);
+        absenteeismHistory.put("department", department);
+        return Jsoner.serialize(absenteeismHistory);
     }
+
 }
 
