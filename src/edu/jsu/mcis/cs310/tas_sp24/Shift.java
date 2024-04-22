@@ -46,7 +46,7 @@ public class Shift {
 
     /**
      * Getter for the id class variable
-     * @return
+     * @return id
      */
     
     public int getId() {
@@ -55,7 +55,7 @@ public class Shift {
     
     /**
      * Getter for the description class variable
-     * @return
+     * @return description
      */
     public String getDescription() {
         return description;
@@ -63,7 +63,7 @@ public class Shift {
 
     /**
      * Getter for the roundinterval class variable
-     * @return
+     * @return roundinterval
      */
     public int getRoundInterval() {
         return defaultschedule.getRoundinterval();
@@ -71,7 +71,7 @@ public class Shift {
 
     /**
      * Getter for the graceperiod class variable
-     * @return
+     * @return graceperiod
      */
     public int getGracePeriod() {
         return defaultschedule.getGraceperiod();
@@ -79,7 +79,7 @@ public class Shift {
 
     /**
      * Getter for the dockpenalty class variable
-     * @return
+     * @return dockpenalty
      */
     public int getDockPenalty() {
         return defaultschedule.getDockpenalty();
@@ -87,7 +87,7 @@ public class Shift {
 
     /**
      * Getter for the lunchthreshold class variable
-     * @return
+     * @return lunchthreshold
      */
     public int getLunchThreshold() {
         return defaultschedule.getLunchthreshold();
@@ -95,7 +95,7 @@ public class Shift {
 
     /**
      * Getter for the shiftstart class variable
-     * @return
+     * @return shiftstart
      */
     public LocalTime getShiftStart() {
         return defaultschedule.getShiftstart();
@@ -103,7 +103,7 @@ public class Shift {
 
     /**
      * Getter for the shiftstop class variable
-     * @return
+     * @return shiftstop
      */
     public LocalTime getShiftStop() {
         return defaultschedule.getShiftstop();
@@ -111,7 +111,7 @@ public class Shift {
 
     /**
      * Getter for the lunchstart class variable
-     * @return
+     * @return lunchstart
      */
     public LocalTime getLunchStart() {
         return defaultschedule.getLunchstart();
@@ -119,7 +119,7 @@ public class Shift {
 
     /**
      * Getter for the lunchstop class variable
-     * @return
+     * @return lunchstop
      */
     public LocalTime getLunchStop() {
         return defaultschedule.getLunchstop();
@@ -127,7 +127,7 @@ public class Shift {
     
     /**
      * Getter for the defaultschedule class variable
-     * @return
+     * @return defaultschedule
      */
     public DailySchedule getDefaultSchedule() {
         return defaultschedule;
@@ -136,7 +136,7 @@ public class Shift {
     /**
      * Getter for the day specific schedule class variable
      * @param dayofweek DayOfWeek object that selects the schedule to return
-     * @return
+     * @return weeklyschedule.get()
      */
     public DailySchedule getDailySchedule(DayOfWeek dayofweek) {  
         return weeklyschedule.get(dayofweek);
@@ -144,7 +144,7 @@ public class Shift {
 
     /**
      * Getter for the lunchduration class variable
-     * @return
+     * @return lunchduration
      */
     public long getLunchDuration() {
         return defaultschedule.getLunchduration();
@@ -152,7 +152,7 @@ public class Shift {
 
     /**
      * Getter for the shiftduration class variable
-     * @return
+     * @return shiftduration
      */
     public long getShiftDuration() {
         return defaultschedule.getShiftduration();

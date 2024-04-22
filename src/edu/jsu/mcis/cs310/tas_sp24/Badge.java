@@ -33,7 +33,7 @@ public class Badge {
     /**
      * Creates a badge id based on the value of the badge description
      * @param description The badge owners name
-     * @return 
+     * @return id
      */
     private String generateIdFromDescription(String description) {   
         Checksum crc = new CRC32();
@@ -46,7 +46,7 @@ public class Badge {
     
     /**
      * Getter for the id class variable
-     * @return
+     * @return id
      */
     public String getId() {
         return id;
@@ -54,7 +54,7 @@ public class Badge {
 
     /**
      * Getter for the description class variable
-     * @return
+     * @return description
      */
     public String getDescription() {
         return description;
