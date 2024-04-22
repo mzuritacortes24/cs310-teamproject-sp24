@@ -28,7 +28,7 @@ public class Absenteeism {
 
     /**
      * Getter for the employee class variable
-     * @return
+     * @return employee
      */
     public Employee getEmployee() {
         return employee;
@@ -36,7 +36,7 @@ public class Absenteeism {
 
     /**
      * Getter for the payPeriod class variable
-     * @return
+     * @return payperiod
      */
     public LocalDate getPayPeriod() {
         return payPeriod;
@@ -44,7 +44,7 @@ public class Absenteeism {
 
     /**
      * Getter for the percentage class variable
-     * @return
+     * @return percentage
      */
     public BigDecimal getPercentage() {
         return percentage;

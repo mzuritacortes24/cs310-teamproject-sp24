@@ -26,7 +26,7 @@ public class Department {
 
     /**
      * Getter for the id class variable
-     * @return
+     * @return id
      */
     public int getId() {
         return id;
@@ -34,7 +34,7 @@ public class Department {
 
     /**
      * Getter for the description class variable
-     * @return
+     * @return description
      */
     public String getDescription() {
         return description;
@@ -42,7 +42,7 @@ public class Department {
 
     /**
      * Getter for the terminalid class variable
-     * @return
+     * @return terminalid
      */
     public int getTerminalid() {
         return terminalid;

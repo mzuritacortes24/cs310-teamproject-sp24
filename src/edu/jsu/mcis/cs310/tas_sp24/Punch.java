@@ -457,7 +457,7 @@ public class Punch {
     
     /**
      * toString override that calls printOriginal method
-     * @return Formatted original timestamp
+     * @return 
      */
     @Override
     

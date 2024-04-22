@@ -43,7 +43,7 @@ public class DailySchedule {
 
     /**
      * Getter for the shiftstart class variable
-     * @return
+     * @return shiftstart
      */
     public LocalTime getShiftstart() {
         return shiftstart;
@@ -51,7 +51,7 @@ public class DailySchedule {
 
     /**
      * Getter for the shiftstop class variable
-     * @return
+     * @return shiftstop
      */
     public LocalTime getShiftstop() {
         return shiftstop;
@@ -59,7 +59,7 @@ public class DailySchedule {
 
     /**
      * Getter for the lunchstart class variable
-     * @return
+     * @return lunchstart
      */
     public LocalTime getLunchstart() {
         return lunchstart;
@@ -67,7 +67,7 @@ public class DailySchedule {
 
     /**
      * Getter for the lunchstop class variable
-     * @return
+     * @return lunchstop
      */
     public LocalTime getLunchstop() {
         return lunchstop;
@@ -75,7 +75,7 @@ public class DailySchedule {
 
     /**
      * Getter for the roundinterval class variable
-     * @return
+     * @return roundinterval
      */
     public int getRoundinterval() {
         return roundinterval;
@@ -83,7 +83,7 @@ public class DailySchedule {
 
     /**
      * Getter for the graceperiod class variable
-     * @return
+     * @return graceperiod
      */
     public int getGraceperiod() {
         return graceperiod;
@@ -91,7 +91,7 @@ public class DailySchedule {
 
     /**
      * Getter for the dockpenalty class variable
-     * @return
+     * @return dockpenalty
      */
     public int getDockpenalty() {
         return dockpenalty;
@@ -99,7 +99,7 @@ public class DailySchedule {
 
     /**
      * Getter for the lunchthreshold class variable
-     * @return
+     * @return lunchthreshold
      */
     public int getLunchthreshold() {
         return lunchthreshold;
@@ -107,7 +107,7 @@ public class DailySchedule {
     
     /**
      * Getter for the lunchduration class variable
-     * @return
+     * @return lunchduration
      */
     public long getLunchduration() {
         return lunchduration;
@@ -115,7 +115,7 @@ public class DailySchedule {
     
     /**
      * Getter for the shiftduration class variable
-     * @return
+     * @return shiftduration
      */
     public long getShiftduration() {
         return shiftduration;

@@ -43,7 +43,7 @@ public class Employee {
 
     /**
      * Getter for the id class variable
-     * @return
+     * @return id
      */
     public int getId() {
         return id;
@@ -51,7 +51,7 @@ public class Employee {
 
     /**
      * Getter for the firstname class variable
-     * @return
+     * @return firstname
      */
     public String getFirstname() {
         return firstname;
@@ -59,7 +59,7 @@ public class Employee {
 
     /**
      * Getter for the middlename class variable
-     * @return
+     * @return middlename
      */
     public String getMiddlename() {
         return middlename;
@@ -67,7 +67,7 @@ public class Employee {
 
     /**
      * Getter for the lastname class variable
-     * @return
+     * @return lastname
      */
     public String getLastname() {
         return lastname;
@@ -75,7 +75,7 @@ public class Employee {
 
     /**
      * Getter for the active class variable
-     * @return
+     * @return active
      */
     public LocalDateTime getActive() {
         return active;
@@ -83,7 +83,7 @@ public class Employee {
 
     /**
      * Getter for the badge class variable
-     * @return
+     * @return badge
      */
     public Badge getBadge() {
         return badge;
@@ -91,7 +91,7 @@ public class Employee {
 
     /**
      * Getter for the department class variable
-     * @return
+     * @return department
      */
     public Department getDepartment() {
         return department;
@@ -99,7 +99,7 @@ public class Employee {
 
     /**
      * Getter for the shift class variable
-     * @return
+     * @return shift
      */
     public Shift getShift() {
         return shift;
@@ -107,7 +107,7 @@ public class Employee {
     
     /**
      * Getter for the employeetype class variable
-     * @return
+     * @return employee
      */
     public EmployeeType getEmployeeType() {
         return employeeType;
